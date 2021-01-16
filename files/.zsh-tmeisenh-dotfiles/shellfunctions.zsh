@@ -5,59 +5,57 @@
 # Works on zsh versions > 4.0.9.
 #********************************************************************
 
-setenv() { export $1=$2 }  # csh compatibility
-
 # Usage: pskill <application/program name>
 # Description: kills a process
-function pskill () {
-    pkill -f $1
+function pskill() {
+  pkill -f $1
 }
 
 # Usage: killport <port number>
 # Description: kills the process listening on the given port
-function killport () {
+function killport() {
   lsof -t -i :$1 | xargs --no-run-if-empty kill -9
 }
 
 # Usage: smartextract <file>
 # Description: extracts archived files
 # This uses the aliases defined above
-function smartextract () {
+function smartextract() {
   if [ -f $1 ]; then
     case $1 in
-      *.tar.bz2)
-        bz $1
-        ;;
-      *.tar.gz)
-        utar $1
-        ;;
-      *.bz2)
-        bunzip2 $1
-        ;;
-      *.gz)
-        gunzip $1
-        ;;
-      *.jar)
-        jar xf $1
-        ;;
-      *.tar)
-        utar $1
-        ;;
-      *.tbz2)
-        bz $1
-        ;;
-      *.tgz)
-        utar $1
-        ;;
-      *.zip)
-        unzip $1
-        ;;
-      *.Z)
-        uncompress $1
-        ;;
-      *)
-        echo "'$1' cannot be extracted via smartextract()."
-        ;;
+    *.tar.bz2)
+      bz $1
+      ;;
+    *.tar.gz)
+      utar $1
+      ;;
+    *.bz2)
+      bunzip2 $1
+      ;;
+    *.gz)
+      gunzip $1
+      ;;
+    *.jar)
+      jar xf $1
+      ;;
+    *.tar)
+      utar $1
+      ;;
+    *.tbz2)
+      bz $1
+      ;;
+    *.tgz)
+      utar $1
+      ;;
+    *.zip)
+      unzip $1
+      ;;
+    *.Z)
+      uncompress $1
+      ;;
+    *)
+      echo "'$1' cannot be extracted via smartextract()."
+      ;;
     esac
   else
     echo "'$1' is not a valid file."
@@ -69,24 +67,24 @@ function smartextract () {
 function showarchive() {
   if [[ -f $1 ]]; then
     case $1 in
-      *.tar.gz)
-        gunzip -c $1 | tar -tf - --
-        ;;
-      *.tar)
-        tar -tf $1
-        ;;
-      *.tgz)
-        tar -ztf $1
-        ;;
-      *.zip)
-        unzip -l $1
-        ;;
-      *.bz2)
-        bzless $1
-        ;;
-      *)
-        echo "'$1' cannot be shown via showarchive"
-        ;;
+    *.tar.gz)
+      gunzip -c $1 | tar -tf - --
+      ;;
+    *.tar)
+      tar -tf $1
+      ;;
+    *.tgz)
+      tar -ztf $1
+      ;;
+    *.zip)
+      unzip -l $1
+      ;;
+    *.bz2)
+      bzless $1
+      ;;
+    *)
+      echo "'$1' cannot be shown via showarchive"
+      ;;
     esac
   else
     echo "'$1' is not a valid archive"
@@ -96,7 +94,7 @@ function showarchive() {
 # This only works if the remote host allows password authentication
 # If you leave the passphrase blank you won't have to type a password for
 # access into the remote system.
-function ssh-automate-login () {
+function ssh-automate-login() {
   echo "Checking to see if a public key exists."
 
   if [ ! -f .ssh/id_rsa ]; then
@@ -108,10 +106,10 @@ function ssh-automate-login () {
   fi
 
   echo "Copying public key to remote host."
-  ssh $1 "([ -d ~/.ssh ]||mkdir -m 700 ~/.ssh) && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys" < ~/.ssh/id_rsa.pub
+  ssh $1 "([ -d ~/.ssh ]||mkdir -m 700 ~/.ssh) && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys" <~/.ssh/id_rsa.pub
 
   echo "Done!"
-} 
+}
 
 function unix_timestamp_to_date() {
   perl -e "require 'ctime.pl'; print &ctime($1);"
@@ -130,11 +128,11 @@ function delete_remote_git_tag() {
   git tag -d ${1} && git push origin :refs/tags/${1}
 }
 
-function strip_spaces_from_files {
+function strip_spaces_from_files() {
   find ${1} -type f -exec bash -c 'mv -f "$0" "${0// /_}"' {} \;
 }
 
-function normalize_filename {
+function normalize_filename() {
   mv -f "$1" "${1// /_}"
 }
 
@@ -150,3 +148,6 @@ function check_CSR() {
   openssl req -text -noout -verify -in $1
 }
 
+function home_status() {
+  (cd ~/git/dotfiles; git st)
+}

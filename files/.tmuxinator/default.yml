@@ -1,0 +1,11 @@
+name: default
+
+windows:
+  - main:
+      root: ~/
+      layout: tiled
+      panes:
+        - clear;
+        - clear;
+        - clear;
+        - clear;

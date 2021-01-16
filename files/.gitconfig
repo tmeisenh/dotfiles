@@ -1,0 +1,50 @@
+[user]
+name = Travis Meisenheimer
+email = travis@indexoutofbounds.com
+signingkey = FC14F9C3
+
+[github]
+user = tmeisenh
+
+[color]
+ui = auto
+interactive = auto
+status = auto
+commit = auto
+diff = auto
+branch = auto
+
+[apply]
+whitespace = strip
+whitespace = nowarn
+
+[alias]
+br = branch
+ci = commit --verbose
+cia = commit --amend --no-edit
+co = checkout
+dc = diff --cached
+di = diff
+lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+p = push -u origin HEAD
+punch = push --force-with-lease
+st = status
+stats=shortlog --numbered --summary
+staged = diff --staged
+sub = submodule update --init --recursive
+svn-pull = !git svn fetch && git svn rebase
+svn-push = !git svn dcommit
+uncommit = reset --soft HEAD^
+unstage = reset HEAD --
+
+[core]
+excludesfile = ~/.gitignore_global
+
+[include]
+path = .gitconfig.local
+
+[push]
+default = simple
+
+[pull]
+rebase = true

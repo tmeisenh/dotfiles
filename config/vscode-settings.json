@@ -1,0 +1,76 @@
+{
+  "window.zoomLevel": 0,
+  "breadcrumbs.enabled": true,
+  "files.autoSave": "onFocusChange",
+  "extensions.ignoreRecommendations": false,
+  "explorer.openEditors.visible": 0,
+  "explorer.confirmDelete": false,
+  "editor.hover.enabled": true,
+  "editor.cursorStyle": "line-thin",
+  "editor.fontFamily": "Source Code Pro",
+  "editor.fontSize": 18,
+  "editor.fontWeight": "400",
+  "editor.renderWhitespace": "none",
+  "editor.minimap.enabled": false,
+  "editor.minimap.maxColumn": 60,
+  "editor.snippetSuggestions": "top",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.autoIndent": "full",
+  "editor.minimap.renderCharacters": true,
+  "editor.renderIndentGuides": false,
+  "editor.codeLens": false,
+  "editor.quickSuggestionsDelay": 50,
+  "editor.colorDecorators": false,
+  "editor.parameterHints.enabled": false,
+  "editor.cursorBlinking": "phase",
+  "editor.cursorSmoothCaretAnimation": true,
+  "editor.gotoLocation.multipleImplementations": "goto",
+  "editor.gotoLocation.multipleDefinitions": "goto",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "workbench.activityBar.visible": true,
+  "workbench.editor.showIcons": false,
+  "workbench.editor.enablePreviewFromQuickOpen": false,
+  "workbench.editor.enablePreview": false,
+  "workbench.colorCustomizations": {
+    "editorBracketMatch.background": "#40404080",
+    "editorBracketMatch.border": "#404040A0",
+    "editorLineNumber.foreground": "#404060F0",
+    "editorLineNumber.activeForeground": "#60607090",
+    "editor.lineHighlightBorder": "#40404020",
+    "editorCursor.foreground": "#909090A0"
+  },
+  "workbench.panel.defaultLocation": "right",
+  "workbench.list.horizontalScrolling": true,
+  "workbench.colorTheme": "Gruvbox Dark (Soft)",
+  "terminal.integrated.fontFamily": "Source Code Pro, Menlo, Monaco, 'Courier New', monospace",
+  "terminal.integrated.fontSize": 12,
+  "terminal.integrated.cursorStyle": "line",
+  "terminal.integrated.scrollback": 10000,
+  "references.preferredLocation": "view",
+  "files.exclude": {
+    "**/karma_html": true,
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true
+  },
+  "files.associations": {
+    "*.targets": "makefile"
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/.vscode": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "gitlens.views.fileHistory.enabled": false,
+  "gitlens.views.lineHistory.enabled": true,
+  "tslint.jsEnable": true
+}

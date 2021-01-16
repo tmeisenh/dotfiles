@@ -8,8 +8,8 @@
 #********************************************************************
 
 # System  specific environment variables and settings
-bindkey "^[[H" beginning-of-line       ## home
-bindkey "^[[F" end-of-line             ## end
+bindkey "^[[H" beginning-of-line ## home
+bindkey "^[[F" end-of-line       ## end
 
 # use vim for less, man, and git
 VIM_LESS=$(brew --prefix vim)/share/vim/vim82/macros/less.sh
@@ -25,14 +25,13 @@ alias xcode="open -a Xcode"
 compctl -g '*.(xcworkspace|xcodeproj)' + -g '*(-/)' xcode
 
 # opens any workspace in the current working directory
-function openws {
-	find . -type d -name "*.xcworkspace" -exec open {} \;
+function openws() {
+  find . -type d -name "*.xcworkspace" -exec open {} \;
 }
 
 function clean_derived_data() {
   rm -rf ~/Library/Developer/Xcode/DerivedData
 }
-
 
 # homebrew manpath additions
 if [ -d /usr/local/opt/coreutils/libexec/gnuman ]; then
@@ -47,9 +46,9 @@ hash -d log=/var/log
 
 # Usage: diskeject drive_number
 # Description: kills a process
-diskeject () {
-    echo -n "unmounting drive $1..."
-    drutil tray eject -drive $1
+diskeject() {
+  echo -n "unmounting drive $1..."
+  drutil tray eject -drive $1
 }
 
 upgrade_homebrew() {
@@ -62,7 +61,7 @@ upgrade_homebrew() {
 # environment stuff
 #********************************************************************
 
-export JAVA_HOME=`/usr/libexec/java_home`
+export JAVA_HOME=$(/usr/libexec/java_home)
 openssl_bin=/usr/local/opt/openssl/bin # 4/2016 - Homebrew doesn't allow you to link openssl
 
 path=(

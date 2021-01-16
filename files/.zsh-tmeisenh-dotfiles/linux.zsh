@@ -12,10 +12,10 @@ alias last_mod="ls --color -Flat -h -H -b -X -T 0"
 alias xcopy="xclip"
 alias pbcopy="xclip"
 
-bindkey "^[OH" beginning-of-line       ## home
-bindkey "^[OF" end-of-line             ## end
-bindkey "^[OA" up-line-or-search       ## up arrow for back-history-search
-bindkey "^[OB" down-line-or-search     ## down arrow for fwd-history-search
+bindkey "^[OH" beginning-of-line   ## home
+bindkey "^[OF" end-of-line         ## end
+bindkey "^[OA" up-line-or-search   ## up arrow for back-history-search
+bindkey "^[OB" down-line-or-search ## down arrow for fwd-history-search
 
 # color man pages, whoa...
 VIM=/usr/share/vim/vim73
@@ -25,20 +25,20 @@ VIM=/usr/share/vim/vim73
 hash -d log=/var/log
 
 function search_apt() {
- apt-cache search "${1}"
+  apt-cache search "${1}"
 }
 
-function clean_ext2fs_usbstick {
+function clean_ext2fs_usbstick() {
   sudo fsck -t ext2 /dev/sdb1
 }
 
 # mount usbstick to common place
-function mount_ext2fs_usbstick {
+function mount_ext2fs_usbstick() {
   sudo mount -t ext2 /dev/sdb1 /mnt/usb
 }
 
 # unmount usbstick from common place
-function unmount_ext2fs_usbstick {
+function unmount_ext2fs_usbstick() {
   sudo umount /mnt/usb
 }
 

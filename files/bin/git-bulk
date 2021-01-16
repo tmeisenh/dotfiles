@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+find . -type d -name .git -execdir pwd \; \
+    -execdir git "$@" \; \
+    -execdir echo '' \;

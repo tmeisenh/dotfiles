@@ -9,8 +9,8 @@
 [[ -f /etc/profile ]] && source /etc/profile
 
 # Some environment variables and settings
-export USER=`id -un`
-export HOSTNAME=`/bin/hostname`
+export USER=$(id -un)
+export HOSTNAME=$(/bin/hostname)
 export LC_ALL=en_US.utf-8
 export LANG=$LC_ALL
 export EDITOR='vi'
@@ -18,7 +18,7 @@ export PAGER='less'
 export ZLS_COLORS=$LS_COLORS
 export ZSHCACHEDIR=$HOME/.zsh-cache
 export ZSHCONF=$HOME/.zsh-tmeisenh-dotfiles
-bindkey -v        #vi key bindings
+bindkey -v #vi key bindings
 
 # Set term if not set
 #if [ "$TERM" = "" -o "$TERM" = "unknown" ]; then
@@ -27,7 +27,7 @@ bindkey -v        #vi key bindings
 #        $TERM="linux"
 #    fi
 #fi
-     
+
 # Set Logs and History
 watch=(notme root)
 
@@ -41,14 +41,14 @@ HISTFILE=$HOME/.zsh_history
 typeset -U path cdpath manpath fpath
 autoload -U zed
 autoload zmv
-autoload zcalc 
+autoload zcalc
 autoload zargs
 autoload colors && colors
 autoload history-search-end
 autoload zkbd
 zmodload -i zsh/complist
-autoload -U predict-on          && \
-  zle -N predict-on             && \
+autoload -U predict-on &&
+  zle -N predict-on &&
   zle -N predict-off
 
 # set common paths
@@ -67,12 +67,10 @@ manpath=(
 )
 
 [[ -d $HOME/bin ]] && path=($HOME/bin $path)
-[[ -d $HOME/bin-`uname | tr "[:upper:]" "[:lower:]"` ]] && path=($HOME/bin-`uname | tr "[:upper:]" "[:lower:]"` $path)
+[[ -d $HOME/bin-$(uname | tr "[:upper:]" "[:lower:]") ]] && path=($HOME/bin-$(uname | tr "[:upper:]" "[:lower:]") $path)
 
-# Set display colors - This is a GNU coreutils ability only.  We use 
-# /etc/DIR_COLORS or our own, modified version which we store in ~.
-gdircolors &>/dev/null 2>&1 && alias dircolors="gdircolors" 
-[[ -e ~/.dir_colors ]] && eval `dircolors -b ~/.dir_colors` 
+# Load custom LS_COLORS
+[[ -e $ZSHCONF/ls_colors.sh ]] && source $ZSHCONF/ls_colors.sh
 
 # Use hard limits, except for a smaller stack and no core dumps
 unlimit
@@ -105,13 +103,13 @@ source $ZSHCONF/shellfunctions.zsh
 ## Now, allow for system, host, etc customizations
 
 # Load distro specific settings (darwin, freebsd, linux, etc)
-if [[ -s "${ZSHCONF}/`uname | tr "[:upper:]" "[:lower:]" `.zsh" ]]; then
-  source "${ZSHCONF}/`uname | tr "[:upper:]" "[:lower:]" `.zsh"
+if [[ -s "${ZSHCONF}/$(uname | tr "[:upper:]" "[:lower:]").zsh" ]]; then
+  source "${ZSHCONF}/$(uname | tr "[:upper:]" "[:lower:]").zsh"
 fi
 
 # Load system specific settings (box1, box2, etc)
-if [[ -s "${ZSHCONF}/`hostname | tr "[:upper:]" "[:lower:]" `.zsh" ]]; then
-  source "${ZSHCONF}/`hostname | tr "[:upper:]" "[:lower:]" `.zsh"
+if [[ -s "${ZSHCONF}/$(hostname | tr "[:upper:]" "[:lower:]").zsh" ]]; then
+  source "${ZSHCONF}/$(hostname | tr "[:upper:]" "[:lower:]").zsh"
 fi
 
 # Load private (not stored in git) settings
@@ -120,10 +118,9 @@ source $ZSHCONF/private.zsh
 # Load anything specific to a work project
 for f in $ZSHCONF/projects/*; do source $f; done
 
-
-# Umask settings 
+# Umask settings
 # -rw-r--r--
- umask 022
+umask 022
 
 # -rw-rw-r--
 # umask 2
@@ -131,9 +128,9 @@ for f in $ZSHCONF/projects/*; do source $f; done
 # -rw-------
 #umask 007
 
-# If root set unmask to 077 to allow new files to remain private 
-if [ "`id -u`" = "0" ];    then
-    umask 077
+# If root set unmask to 077 to allow new files to remain private
+if [ "$(id -u)" = "0" ]; then
+  umask 077
 fi
 
 # End

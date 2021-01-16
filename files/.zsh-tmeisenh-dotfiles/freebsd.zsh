@@ -62,17 +62,17 @@ function find_unmaintained_ports() {
 
 # FreeBSD won't mount the usbstick if it is not clean.
 # depends on /usr/ports/sysutils/e2fsprogs
-function clean_ext2fs_usbstick {
+function clean_ext2fs_usbstick() {
   sudo fsck -t ext2fs /dev/da0s1
 }
 
 # mount usbstick to common place
-function mount_ext2fs_usbstick {
+function mount_ext2fs_usbstick() {
   sudo mount -t ext2fs /dev/da0s1 /mnt/usb
 }
 
 # unmount usbstick from common place
-function unmount_ext2fs_usbstick {
+function unmount_ext2fs_usbstick() {
   sudo umount /mnt/usb
 }
 
@@ -95,7 +95,6 @@ path=(
   $ANDROID_HOME/tools
   $path
 )
-
 
 # FreeBSD uses a javawrapper.sh in /usr/local/bin to execute java type commands.
 # We manually set java and JAVA_HOME in case someone else needs it (maven/ant/gradle)

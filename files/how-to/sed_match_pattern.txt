@@ -1,0 +1,16 @@
+Sometimes you want to search for a pattern and add some characters, like parenthesis,
+around or near the pattern you found. It is easy to do this if you are looking for a particular string:
+
+sed 's/abc/(abc)/' <old >new
+
+This won't work if you don't know exactly what you will find. How can you put the string you found in
+the replacement string if you don't know what it is?
+
+The solution requires the special character "&." It corresponds to the pattern found.
+
+sed 's/[a-z]*/(&)/' <old >new
+
+You can have any number of "&" in the replacement string. You could also double a pattern, e.g. the first number of a line:
+
+% echo "123 abc" | sed 's/[0-9]*/& &/'
+123 123 abc

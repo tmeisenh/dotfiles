@@ -1,0 +1,1695 @@
+#!/bin/sh
+
+#
+# This script provides firewall functionality that can be used to help
+# secure a Linux system with the 2.4.x kernel.  It is broken up into a number
+# of different sections:
+#
+# - Section 1:  Configure basic information about the network settings on your
+#               machine.
+# - Section 2:  Configure the services that will be hosted on the firewall, or
+#               that the firewall can access on external machines.  This is
+#               configuration for the most common services.  More advanced
+#               configuration is available in section 3.
+# - Section 3:  Configure the services that will be hosted on the firewall, or
+#               that the firweall can access on external machines, that were
+#               not explicitly named in Section 2.  This section also allows
+#               you to configure services available to external machines that
+#               will be passed through the firewall to internal machines.
+# - Section 4:  A safeguard to prevent an unconfigured script from being run.
+#               If that were to happen, it could cut off network access to the
+#               machine which could be bad in some cases.  So now you have to
+#               set a flag to be able to run the script.
+# - Section 5:  Where the actual work is done.  There shouldn't be any need to
+#               change anything in this section unless what you want to do
+#               isn't explicitly allowed by something in one of the earlier
+#               sections.
+#
+# Written by Neil A. Wilson (nawilson@nawilson.com).
+#
+# ------ CHANGELOG ------
+# - 09/02/2001:  Initial release
+#
+
+
+
+
+#
+# Section 1:  Network Configuration.  Simply specify the correct values for
+#             your environment.
+#
+
+# Specify the interface that is connected to the external network.  For
+# dial-up connections, this will likely be "ppp0".  For permanent connections,
+# this will probably be "eth0".
+EXTERNAL_INTERFACE="ppp0"
+
+
+# Specify the interface that is connected to the internal network.  For
+# dial-up connections, this will likely be "eth0".  For permanent connections,
+# this will probably be "eth1".
+INTERNAL_INTERFACE="eth1"
+
+
+# Specify the range of addresses that are on the internal network and will be
+# allowed to pass through the firewall.
+INTRANET_RANGE="192.168.0.0/24"
+
+
+# Specify the maximum number of connections from the internal network that
+# can be passed through to external machines.  This is the number of
+# connections that can be tracked by the stateful inspection component of the
+# 2.4.x firewall.  Note that the more active machines you have on the internal
+# network, the bigger this number will need to be, and the more memory that
+# will be required on the firewall to remember everything.  Unless the internal
+# network is huge, you should never get anywhere close to the default value
+# specified here.
+MAX_MASQUERADED_CONNECTIONS="32767"
+
+
+# Specify the maximum number of new TCP-based connection attempts per second.
+# This can prevent a number of different kinds of denial of service attacks.
+# Unless this is a heavy-use system (for example, a popular Web server), this
+# should be pretty low.  There are two settings here and it's kind of complex
+# to explain what they both do, so either leave them at the defaults or read
+# up on how the limiting capabilities of the kernel work.
+FLOOD_LIMIT="1/s"
+FLOOD_BURST_LIMIT="4"
+
+
+# Specify the location of the iptables binary.  If you installed from source,
+# then it is probably "/usr/local/sbin/iptables".  However, older versions
+# installed in "/usr/bin/iptables".  Specify the correct location for iptables
+# on your system.
+IPTABLES="/sbin/iptables"
+
+
+
+
+# 
+# Section 2:  Specify the network services that will be allowed for the
+#             firewall itself.  This section allows you to specify both
+#             services on external machines that can be accessed from the
+#             firewall as well as services on the firewall or in the internal
+#             network that can be accessed from external machines.  Note that
+#             the configuration in this section has nothing to do with the
+#             set of external services that internal machines can access, as
+#             the default ACCEPT policy for the FORWARD chain will allow
+#             internal machines to access anything on the external network.
+#
+#             With the exception of services to be passed through to internal
+#             machines (which have their own format specified later), you 
+#             should specify a space-delimted set of IP addresses (or CIDR
+#             address ranges) with each service.  To make this easier, a
+#             couple of variables are defined ($ALL_HOSTS and $NO_HOSTS) that
+#             you can specify to indicate that the associated access should be
+#             granted or denied for all hosts, respectively.
+#
+
+# This specifies an address range that will match all addresses in the IPv4
+# address space.  You should not change it.  It is provided so that it is
+# available for use as a variable for individual service specifications
+# below.
+ALL_HOSTS="0.0.0.0/0"
+
+
+# This provides a variable that can be used to indicate that no hosts should
+# be allowed to access a given service on the firewall, or that the firewall
+# should not be allowed to make an outbound connection to any hosts for a
+# particular service.  You should not change this.
+NO_HOSTS=""
+
+
+# This specifies whether the firewall will be allowed to ping external hosts.
+# This is very useful and should be safe, so there is probably no reason not
+# to allow it.
+OUTBOUND_PING="$ALL_HOSTS"
+
+
+# This specifies whether external machines will be allowed to ping the
+# firewall.  If the firewall doesn't respond to pings, then it could appear
+# invisible to some probes by attackers, and there would not be a danger of
+# a "ping of death" or "smurf" kind of attack (although Linux is not
+# vulnerable to these specific ping-based attacks).  Therefore, it is strongly
+# recommended that you leave this disabled.  If you want to allow the firewall
+# to respond to pings for only a specific set of addresses, then place the
+# IP addresses (separated by spaces) in the quotes instead of "Y" or "N"
+INBOUND_PING="$NO_HOSTS"
+
+
+# This specifies whether the firewall will be allowed to use traceroute to see
+# the path taken to reach external hosts.  This is also very useful and there
+# is no reason not to allow it.
+OUTBOUND_TRACEROUTE="$ALL_HOSTS"
+
+
+# This specifies whether the firewall will respond to traceroute requests.
+# This is in the same category as responding to pings, but is even less
+# frequently used.  Therefore, you can probably leave it disabled.
+INBOUND_TRACEROUTE="$NO_HOSTS"
+
+
+# This specifies whether the firewall will be allowed to access external DNS
+# servers.  Unless you will be using exclusively internal DNS servers (note
+# that these internal DNS servers will automatically have access to query
+# external DNS servers as well), you should allow this, although you can
+# specify a specific set of addresses if you will only be accessing one or
+# two external DNS servers.
+OUTBOUND_DNS="$ALL_HOSTS"
+
+
+# This specifies whether you will host an externally-available DNS server on
+# the firewall.  If you're planning on using BIND, I'd recommend that you think
+# about it again.  BIND has been historically insecure, so you should go with
+# an alternative like djbdns or an external service like the one provided at
+# www.granitecanyon.com.  If you do allow inbound DNS, then remember that you
+# can specify the external hosts that have the ability to access it.
+INBOUND_DNS="$NO_HOSTS"
+
+
+# This specifies whether the firewall will be allowed to access an external
+# SMTP server.  If you will be running a mail server on the firewall (see the
+# warning on that below), then you will need this so that it can send messages
+# out to other mail servers.  If you aren't running an SMTP daemon, you may
+# still need this if you have any kind of MTA that will connect to an external
+# SMTP server.  If you are not using these, then you can safely leave this
+# disabled.
+OUTBOUND_SMTP="$ALL_HOSTS"
+
+
+# This specifies whether the firewall will host an SMTP server.  Although the
+# standard Linux SMTP server is sendmail, it (like BIND) is notoriously
+# insecure.  If you do host an SMTP server on the firewall, you would be wise
+# to go with qmail, which is much more secure (and easier to adminsiter).  If
+# you're not using this, then leave this turned off.
+INBOUND_SMTP="$NO_HOSTS"
+
+
+# This specifies whether the firewall should be allowed to access an external
+# telnet server.  If you need to telnet to an external machine, then it is
+# recommended that you do so from an internal machine.  If outbound telnet is
+# allowed, then it is possible that someone attacking your machine could use
+# your machine to launch an attack by trying to telnet into an external
+# machine that does have telnet enabled.  Therefore, unless you really need
+# to telnet to an external machine from the firewall, then leave this
+# disabled.
+OUTBOUND_TELNET="$ALL_HOSTS"
+
+
+# This specifies whether the firewall will host a telnet server.  You should
+# not do this under any circumstances, as it is one of the most dangerous
+# protocols and a really easy way to get hacked.  Use something like SSH
+# instead if you need to have command-line access from external hosts.  If
+# you absolutely must use telnet, then I strongly recommend that it is only
+# available to a few external hosts and not available to the general public.
+INBOUND_TELNET="$NO_HOSTS"
+
+
+# This specifies whether the firewall should be allowed to access an external
+# SSH server.  If you need to access a remote machine via SSH, and it has to be
+# from the firewall and not from an internal machine, then allow it here.  If
+# not, then it is safer to deny it.
+OUTBOUND_SSH="$ALL_HOSTS"
+
+
+# This specifies whether the firewall will host an SSH server.  If you need to
+# have external command-line access to the firewall, then this is the safest
+# option.  However, if you do not need this level of access (i.e., because you
+# can do all of the necessary administration from an internal machine), then
+# leave it disabled.
+INBOUND_SSH="$NO_HOSTS"
+
+
+# This specifies whether the firewall should be allowed to access an external
+# FTP server.  If you need to access a remote FTP server, and it has to be
+# from the firewall and not from an internal machine, then you can allow it
+# here.  If you can get by with just having FTP from an internal machine, then
+# leave it disabled.
+OUTBOUND_FTP="$ALL_HOSTS"
+
+
+# This specifies whether the firewall will host an FTP server.  This is
+# dangerous if you are going to allow anything other than anonymous downloads,
+# and even then you need to make sure that the server is properly configured
+# (something like ProFTPd is much better than wu-ftpd or other servers because
+# it is easier to configure in a chrooted environment).
+INBOUND_FTP="$NO_HOSTS"
+
+
+# This specifies whether the firewall should be allowed to access an external
+# HTTP server.  If this is necessary and it is not sufficient to do so from
+# an internal machine, then you can allow it.  If it is not necessary, then
+# leave it disabled.
+OUTBOUND_HTTP="$ALL_HOSTS"
+
+
+# This specifies whether the firewall will host a Web server (using HTTP
+# rather than HTTPS).  If the Web server is properly configured and you are
+# carefuly about dynamic content, then this is not too dangerous.  If you
+# are planning on having any restricted content, however, then you are
+# strongly encouraged to use HTTPS so that any passwords sent are
+# SSL-encrypted.
+INBOUND_HTTP="$NO_HOSTS"
+
+
+# This specifies whether the firewall should be allowed to access an external
+# HTTPS server.  This is probably not necessary (and most tex-based Web
+# browsers do not support it by default), so it is safer to leave it
+# disabled.
+OUTBOUND_HTTPS="$ALL_HOSTS"
+
+
+# This specifies whether the firewall will host a secure Web server (using
+# HTTPS).  If the server is properly configured and you are careful about
+# using dynamic content, then this is not too dangerous.  It is also safer
+# than unencrypted HTTP for restricted content that will not be accessible to
+# the general public.
+INBOUND_HTTPS="$NO_HOSTS"
+
+
+
+
+#
+# Section 3:  This section allows you to specify a set of generic firewall
+#             rules that are not handled by any of the rules in section 2.
+#             This will work for most network applications that don't do
+#             funky things like FTP.
+#
+
+# This is the range of ports that will be used by external clients to access
+# services on the firewall, or that the firewall will use to access services
+# on external clients.  You should not change this.
+UNPRIVILEGED_PORTS="1024:65535"
+ALL_PORTS="0:65535"
+
+# This allows you to specify a set of rules that allow outbound TCP-based
+# connections from the firewall to a specified port or set of ports on a
+# specified machine or set of machines.  The format for these rules is:
+#      src_port,dest_addr,dest_port
+# where:
+# - "src_port" is the port or set of ports used from the firewall to
+#   establish the outbound connection (this will be $UNPRIVILEGED_PORTS in
+#   most cases)
+# - "dest_addr" is the IP address or CIDR address range to which the firewall
+#   may establish connections (this will be $ALL_HOSTS in most cases)
+# - "dest_port" is the port number on the destination machine(s) associated
+#   with the desired service.
+# Multiple rules of this type may be separated by spaces, although there
+# should be no spaces around the commas themselves.
+GENERIC_TCP_OUTBOUND=""
+
+
+# This allows you to specify a set of rules that allow outbound UDP-based
+# connections from the firewall to a specified port or set of ports on a
+# specified machine or set of machines.  The format for these rules is:
+#      src_port,dest_addr,dest_port
+# where:
+# - "src_port" is the port or set of ports used from the firewall to
+#   establish the outbound connection (this will be $UNPRIVILEGED_PORTS in
+#   most cases)
+# - "dest_addr" is the IP address or CIDR address range to which the firewall
+#   may establish connections (this will be $ALL_HOSTS in most cases)
+# - "dest_port" is the port number on the destination machine(s) associated
+#   with the desired service.
+# Multiple rules of this type may be separated by spaces, although there
+# should be no spaces around the commas themselves.
+GENERIC_UDP_OUTBOUND=""
+
+
+# This allows you to specify a set of rules that allow inbound TCP-based
+# connections from a specified external machine or set of machines on the
+# specified port or set of ports.  The format for these rules is:
+#      src_addr,src_port,dest_port
+# where:
+# - "src_addr" is the address or set of addresses of the external
+#   machine(s) that may connect to the associated service on the firewall
+# - "src_port" is the ports that should be used from the originating
+#   machine(s) (usually $UNPRIVILEGED_PORTS)
+# - "dest_port" is the port or set of ports on the firewall to which the
+#   external machine(s) may establish the connections.
+# Multiple rules of this type may be separated by spaces, although there
+# should be no spaces around the commas themselves.
+GENERIC_TCP_INBOUND=""
+
+# This allows you to specify a set of rules that allow inbound UDP-based
+# connections from a specified external machine or set of machines on the
+# specified port or set of ports.  The format for these rules is:
+#      src_addr,src_port,dest_port
+# where:
+# - "src_addr" is the address or set of addresses of the external
+#   machine(s) that may connect to the associated service on the firewall
+# - "src_port" is the ports that should be used from the originating
+#   machine(s) (usually $UNPRIVILEGED_PORTS)
+# - "dest_port" is the port or set of ports on the firewall to which the
+#   external machine(s) may establish the connections.
+# Multiple rules of this type may be separated by spaces, although there
+# should be no spaces around the commas themselves.
+GENERIC_UDP_INBOUND=""
+
+
+# This allows you to specify a set of rules that allow inbound TCP-based
+# connections from a specified external machine or set of machines to be
+# passed through to an internal machine at the specified address and port.
+# The format for these rules is:
+#      src_addr,src_port,orig_dest_port,pt_addr,pt_port
+# where:
+# - "src_addr" is the address or set of addresses of the external
+#   machine(s) for which the connections will be passed through
+# - "src_port" is the port or set of ports on the external machine(s) that
+#   should be used to send the connections out to the firewall
+# - "orig_dest_port" is the port on the firewall itself to which the external
+#   machine(s) should connect.  This may be different from the port on the
+#   internal machine to which the traffic will be passed
+# - "pt_addr" is the address of the internal machine that should respond to
+#   the passed through traffic
+# - "pt_port" is the port on the internal machine to which the passed through
+#   traffic should be directed
+# Multiple rules of this type may be separated by spaces, although there
+# should be no spaces around the commas themselves.
+TCP_PASSTHROUGH=""
+
+# This allows you to specify a set of rules that allow inbound TCP-based
+# connections from a specified external machine or set of machines to be
+# passed through to an internal machine at the specified address and port.
+# The format for these rules is:
+#      src_addr,src_port,orig_dest_port,pt_addr,pt_port
+# where:
+# - "src_addr" is the address or set of addresses of the external
+#   machine(s) for which the connections will be passed through
+# - "src_port" is the port or set of ports on the external machine(s) that
+#   should be used to send the connections out to the firewall
+# - "orig_dest_port" is the port on the firewall itself to which the external
+#   machine(s) should connect.  This may be different from the port on the
+#   internal machine to which the traffic will be passed
+# - "pt_addr" is the address of the internal machine that should respond to
+#   the passed through traffic
+# - "pt_port" is the port on the internal machine to which the passed through
+#   traffic should be directed
+# Multiple rules of this type may be separated by spaces, although there
+# should be no spaces around the commas themselves.
+UDP_PASSTHROUGH=""
+
+
+# This allows you to specify a set of rules that will pass through all traffic
+# from an external address to a specific internal address.  Note that this is
+# very dangerous as a general rule, but it may be necessary to get some kinds
+# of VPN software to work.  Therefore, do not use this unless as a last
+# resort.  The format for rules of this type is:
+#      src_addr,dest_addr
+# where:
+# - "src_addr" is the address of the external machine for which the traffic
+#   will be passed through.
+# - "dest_addr" is the address of the internal machine to which the traffic
+#   from the specified external host will be directed.
+# Multiple rules of this type may be separated by spaces, although there
+# should be no spaces around the commas themselves.
+COMPLETE_PASSTHROUGH=""
+
+
+
+
+#
+# Section 4:  Force the user to set a flag indicating that this script has
+#             been configured.  This is just a safeguard to prevent the user
+#             from running the unconfigured script and cutting off network
+#             access to his/her machine.
+#
+
+# Once the firewall has been configured for your environmnet, change this "N"
+# to a "Y".  Until you do that, the firewall script will not run.
+CONFIGURED="Y"
+
+
+
+
+#
+# Section 5:  Implement all of the rules for the configuration options
+#             specified in earlier sections.  You should not need to edit
+#             anything below this point except to enable functionality not
+#             directly allowed by the above configuration.
+#
+
+# Check to see if the firewall has been configured.  If not, then print out
+# an error and don't go any farter
+if [ "$CONFIGURED" != "Y" ]
+then
+  echo "ERROR:  The firewall script does not appear to have been configured."
+  echo "        If it has been configured, set CONFIGURED to Y in Section 4."
+  exit 1
+fi
+
+
+# If the iptables command couldn't be found, then print out an error message
+# and exit
+if [ -z "$IPTABLES" ]
+then
+  echo "ERROR:  Could not find the iptables executable at $IPTABLES."
+  echo "        Please specify it in Section 1."
+  exit 1
+fi
+
+
+# This specifies the name given to the loopback interface.  It is almost
+# certainly "lo", but if not for some crazy reason, correct it.
+LOOPBACK_INTERFACE="lo"
+
+
+# This figures out the IP address associated with the external interface.  It
+# should work on your system, but if not then tweak it so that it does.
+EXTERNAL_ADDRESS=`ifconfig $EXTERNAL_INTERFACE | grep "inet addr" | awk \
+                  '{print $2}' | cut -d':' -f2`
+
+
+# This figures out the IP address associated with the internal interface.  It
+# should be basically the same command as for the external interface, so if you
+# had to tweak the above syntax, then you will have to make the same change
+# here.
+INTERNAL_ADDRESS=`ifconfig $INTERNAL_INTERFACE | grep "inet addr" | awk \
+                  '{print $2}' | cut -d':' -f2`
+
+
+# Load the iptables kernel modules if necessary
+modprobe ip_tables        2> /dev/null
+modprobe ip_nat_ftp       2> /dev/null
+modprobe ip_conntrack_ftp 2> /dev/null
+
+
+# Flush any existing rules so that we can be sure to start clean.  If we
+# forget this, then existing rules can get in the way and cause uncertain
+# behavior.
+$IPTABLES --flush
+$IPTABLES --flush --table nat
+
+
+# Set the default policies to be as restrictive as possible for connections
+# from internal machines and outbound connections from the firewall.
+# Connections established to external machines from any internal machine will
+# be allowed.
+$IPTABLES --policy INPUT   DROP
+$IPTABLES --policy OUTPUT  DROP
+$IPTABLES --policy FORWARD DROP
+
+
+# Disable explicit congestion notification (ECN) support.  It's a good feature
+# to have, but unfortunately a lot of firewalls are broken and reject any
+# traffic with the ECN flag set.  Too bad.
+if [ -e /proc/sys/net/ipv4/tcp_ecn ]
+then
+  echo 0 > /proc/sys/net/ipv4/tcp_ecn
+fi
+
+
+# Enable protection against TCP SYN cookies (SYN attacks).  These attacks are
+# those in which an external machine sends a lot of packets with just the SYN
+# flag set, which is the first part of the three-part TCP handshake.  However,
+# when the firewall sends back a packet with the SYN and ACK flags set (the
+# second part of the handshake), the external client does not respond with
+# the third packet in the handshake (one with just the ACK flag set).  This is
+# an attempt to take up all of the available connections on the firewall in a
+# denial of service attack.
+echo 1 > /proc/sys/net/ipv4/tcp_syncookies
+
+
+# Enable protection against IP spoofing by requiring source address
+# verification.
+echo 1 > /proc/sys/net/ipv4/conf/$EXTERNAL_INTERFACE/rp_filter
+
+
+# Disable ICMP redirects, which are really only useful in complex routing
+# scenarios and could potentially be used in an attack.  ICMP redirects are
+# special kinds of packets that are meant to inform the firewall that there
+# may be a shorter route to the intended destination.  However, since there
+# is probably only one route (through the ISP's gateway), that would be
+# invalid anyway.
+echo 0 > /proc/sys/net/ipv4/conf/$EXTERNAL_INTERFACE/accept_redirects
+
+
+# Disable source-routed packets, which are really ony used in complex routing
+# scenarios and could potentially be used in an attack.  These are packets in
+# which the originator puts extra routing information in the header that
+# indicates the path that the packet should take rather than letting the
+# intermediate routers determine the appropriate path.
+echo 0 > /proc/sys/net/ipv4/conf/$EXTERNAL_INTERFACE/accept_source_route
+
+
+# Set the maximum number of connections from internal machines to external
+# hosts that will be tracked by the stateful inspection component of the
+# firewall.
+if [ -e /proc/sys/net/ipv4/ip_conntrack_max ]
+then
+  echo $MAX_MASQUERADED_CONNECTIONS > /proc/sys/net/ipv4/ip_conntrack_max
+fi
+
+
+# Turn on IP forwarding so that packets will be forwarded across the
+# interfaces.  If you don't have this, then traffic from internal machines
+# will not be forwarded across the interfaces so they can access the outside
+# world.
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
+
+# Drop all fragmented packets, since they aren't really complete and can be
+# used by hackers to try to circumvent the protection offered by the firewall.
+$IPTABLES --append INPUT                      \
+          --in-interface $EXTERNAL_INTERFACE  \
+          --fragment                          \
+          --jump DROP
+
+
+# Allow all traffic to the loopback interface, since it is necessary for
+# many critical system services (like syslog), and there's probably not much
+# that the firewall can do to prevent your computer from breaking into itself.
+$IPTABLES --append INPUT                       \
+          --in-interface $LOOPBACK_INTERFACE   \
+          --jump ACCEPT
+$IPTABLES --append OUTPUT                      \
+          --out-interface $LOOPBACK_INTERFACE  \
+          --jump ACCEPT
+
+
+# Create a new table called "synflood" and apply rules to limit SYN flooding
+# denial of service attacks.
+$IPTABLES --flush --table synflood  2> /dev/null
+$IPTABLES --new-chain synflood 2> /dev/null
+$IPTABLES --append INPUT                      \
+          --in-interface $EXTERNAL_INTERFACE  \
+          --protocol tcp                      \
+          --tcp-flags SYN SYN                 \
+          --jump synflood
+$IPTABLES --append synflood                   \
+          --match limit                       \
+          --limit $FLOOD_LIMIT                \
+          --limit-burst $FLOOD_BURST_LIMIT    \
+          --jump RETURN
+$IPTABLES --append synflood                   \
+          --jump DROP
+
+
+# Drop all incoming TCP packets in an INVALID state.
+$IPTABLES --append INPUT                      \
+          --in-interface $EXTERNAL_INTERFACE  \
+          --protocol tcp                      \
+          --match state                       \
+          --state INVALID                     \
+          --jump DROP
+
+
+# Drop all incoming TCP packets with the SYN flag set that are not new
+# connections.
+$IPTABLES --append INPUT                      \
+          --in-interface $EXTERNAL_INTERFACE  \
+          --protocol tcp                      \
+          ! --tcp-flags SYN SYN               \
+          --match state                       \
+          --state NEW                         \
+          --jump DROP
+
+
+# Refuse any traffic coming into the external interface that has a source
+# address that matches the address of the external interface, because it must
+# have been spoofed
+$IPTABLES --append INPUT                      \
+          --in-interface $EXTERNAL_INTERFACE  \
+          --source $EXTERNAL_ADDRESS          \
+          --jump DROP 
+
+
+# Refuse any traffic coming into the external interface that has a source
+# address from the loopback address range, since it must have been spoofed.
+$IPTABLES --append INPUT                      \
+          --in-interface $EXTERNAL_INTERFACE  \
+          --source 127.0.0.0/8                \
+          --jump DROP
+
+
+# Refuse any traffic coming into the external interface that has a source
+# address from the internal address range, since it must have been spoofed.
+$IPTABLES --append INPUT                      \
+          --in-interface $EXTERNAL_INTERFACE  \
+          --source $INTRANET_RANGE            \
+          --jump DROP
+
+
+# Refuse any traffic coming into the external interface that has a destination
+# address from the internal address range, since it would be an attempt to
+# exploit the IP forwarding in reverse.
+$IPTABLES --append INPUT                     \
+          --in-interface $EXTERNAL_INTERFACE \
+          --destination $INTRANET_RANGE      \
+          --jump DROP
+
+
+# Refuse any traffic coming into the external interface that has a source
+# address from one of the reserved private network addresses.
+$IPTABLES --append INPUT                      \
+          --in-interface $EXTERNAL_INTERFACE  \
+          --source 10.0.0.0/8                 \
+          --jump DROP
+$IPTABLES --append INPUT                      \
+          --in-interface $EXTERNAL_INTERFACE  \
+          --source 172.16.0.0/12              \
+          --jump DROP
+$IPTABLES --append INPUT                      \
+          --in-interface $EXTERNAL_INTERFACE  \
+          --source 192.168.0.0/16             \
+          --jump DROP
+
+
+# Refuse any traffic coming into the external interface that has a source
+# address in the multicast address range.
+$IPTABLES --append INPUT                      \
+          --in-interface $EXTERNAL_INTERFACE  \
+          --source 224.0.0.0/4                \
+          --jump DROP
+
+
+# Refuse any traffic coming into the external interface that has a source
+# address in one of the class E reserved address ranges.
+$IPTABLES --append INPUT                      \
+          --in-interface $EXTERNAL_INTERFACE  \
+          --source 240.0.0.0/5                \
+          --jump DROP
+
+
+# Allow source-quench ICMP messages that tell the originator that it should
+# not send data so quickly.
+$IPTABLES --append INPUT                       \
+          --in-interface $EXTERNAL_INTERFACE   \
+          --protocol icmp                      \
+          --icmp-type source-quench            \
+          --source $ALL_HOSTS                  \
+          --destination $EXTERNAL_ADDRESS      \
+          --jump ACCEPT
+$IPTABLES --append OUTPUT                      \
+          --out-interface $EXTERNAL_INTERFACE  \
+          --protocol icmp                      \
+          --icmp-type source-quench            \
+          --source $EXTERNAL_ADDRESS           \
+          --destination $ALL_HOSTS             \
+          --jump ACCEPT
+
+
+# Allow parameter-problem ICMP messages that inform the originator that there
+# was something wrong with the header or the packet itself.
+$IPTABLES --append INPUT                       \
+          --in-interface $EXTERNAL_INTERFACE   \
+          --protocol icmp                      \
+          --icmp-type parameter-problem        \
+          --source $ALL_HOSTS                  \
+          --destination $EXTERNAL_ADDRESS      \
+          --jump ACCEPT
+$IPTABLES --append OUTPUT                      \
+          --out-interface $EXTERNAL_INTERFACE  \
+          --protocol icmp                      \
+          --icmp-type parameter-problem        \
+          --source $EXTERNAL_ADDRESS           \
+          --destination $ALL_HOSTS             \
+          --jump ACCEPT
+
+
+# Allow destination-unreachable ICMP messages that inform the orignator that
+# the intended destination could not be reached.
+$IPTABLES --append INPUT                       \
+          --in-interface $EXTERNAL_INTERFACE   \
+          --protocol icmp                      \
+          --icmp-type destination-unreachable  \
+          --source $ALL_HOSTS                  \
+          --destination $EXTERNAL_ADDRESS      \
+          --jump ACCEPT
+$IPTABLES --append OUTPUT                      \
+          --out-interface $EXTERNAL_INTERFACE  \
+          --protocol icmp                      \
+          --icmp-type destination-unreachable  \
+          --source $EXTERNAL_ADDRESS           \
+          --destination $ALL_HOSTS             \
+          --jump ACCEPT
+
+
+# Allow fragmentation-needed ICMP messages that inform the originator that it
+# should send the data in smaller packets to prevent data loss.
+$IPTABLES --append INPUT                       \
+          --in-interface $EXTERNAL_INTERFACE   \
+          --protocol icmp                      \
+          --icmp-type fragmentation-needed     \
+          --source $ALL_HOSTS                  \
+          --destination $EXTERNAL_ADDRESS      \
+          --jump ACCEPT
+$IPTABLES --append OUTPUT                      \
+          --out-interface $EXTERNAL_INTERFACE  \
+          --protocol icmp                      \
+          --icmp-type fragmentation-needed     \
+          --source $EXTERNAL_ADDRESS           \
+          --destination $ALL_HOSTS             \
+          --jump ACCEPT
+
+
+# Configure the firewall to be able to ping out to the specified set of hosts
+for ADDR in `echo $OUTBOUND_PING`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append OUTPUT                      \
+              --out-interface $EXTERNAL_INTERFACE  \
+              --protocol icmp                      \
+              --icmp-type echo-request             \
+              --source $EXTERNAL_ADDRESS           \
+              --destination $ADDR                  \
+              --match state                        \
+              --state NEW,ESTABLISHED,RELATED      \
+              --jump ACCEPT
+    $IPTABLES --append INPUT                       \
+              --in-interface $EXTERNAL_INTERFACE   \
+              --protocol icmp                      \
+              --icmp-type echo-reply               \
+              --source $ADDR                       \
+              --destination $EXTERNAL_ADDRESS      \
+              --match state                        \
+              --state ESTABLISHED,RELATED          \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to respond to pings from the specified set of hosts
+for ADDR in `echo $INBOUND_PING`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append INPUT                       \
+              --in-interface $EXTERNAL_INTERFACE   \
+              --protocol icmp                      \
+              --icmp-type echo-request             \
+              --source $ADDR                       \
+              --destination $EXTERNAL_ADDRESS      \
+              --match state                        \
+              --state NEW,ESTABLISHED,RELATED      \
+              --jump ACCEPT
+    $IPTABLES --append OUTPUT                      \
+              --out-interface $EXTERNAL_INTERFACE  \
+              --protocol icmp                      \
+              --icmp-type echo-reply               \
+              --source $EXTERNAL_ADDRESS           \
+              --destination $ADDR                  \
+              --match state                        \
+              --state ESTABLISHED,RELATED          \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to be able to use traceroute to the specified set of
+# hosts
+for ADDR in `echo $OUTBOUND_TRACEROUTE`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append OUTPUT                     \
+              --out-interface $EXTERNAL_INTERFACE \
+              --protocol udp                      \
+              --source $EXTERNAL_ADDRESS          \
+              --source-port 32769:65535           \
+              --destination $ADDR                 \
+              --destination-port 33434:33523      \
+              --match state                       \
+              --state NEW                         \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to be able to respond to traceroute queries from the
+# specified set of hosts
+for ADDR in `echo $INBOUND_TRACEROUTE`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append INPUT                     \
+              --in-interface $EXTERNAL_INTERFACE \
+              --protocol udp                     \
+              --source $ADDR                     \
+              --source-port 33434:33523          \
+              --destination $EXTERNAL_ADDRESS    \
+              --destination-port 32769:65535     \
+              --match state                      \
+              --state NEW                        \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to be able to make outbound DNS requests to the
+# specified set of hosts
+for ADDR in `echo $OUTBOUND_DNS`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append OUTPUT                        \
+              --out-interface $EXTERNAL_INTERFACE    \
+              --protocol udp                         \
+              --source $EXTERNAL_ADDRESS             \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $ADDR                    \
+              --destination-port 53                  \
+              --match state                          \
+              --state NEW,ESTABLISHED                \
+              --jump ACCEPT
+    $IPTABLES --append INPUT                         \
+              --in-interface $EXTERNAL_INTERFACE     \
+              --protocol udp                         \
+              --source $ADDR                         \
+              --source-port 53                       \
+              --destination $EXTERNAL_ADDRESS        \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED                    \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to be able to respond to inbound DNS requests from
+# the specified set of hosts
+for ADDR in `echo $INBOUND_DNS`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append INPUT                         \
+              --in-interface $EXTERNAL_INTERFACE     \
+              --protocol udp                         \
+              --source $ADDR                         \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $EXTERNAL_ADDRESS        \
+              --destination-port 53                  \
+              --match state                          \
+              --state NEW,ESTABLISHED                \
+              --jump ACCEPT
+    $IPTABLES --append OUTPUT                        \
+              --out-interface $EXTERNAL_INTERFACE    \
+              --protocol udp                         \
+              --source $EXTERNAL_ADDRESS             \
+              --source-port 53                       \
+              --destination $ADDR                    \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED                    \
+              --jump ACCEPT
+  fi
+done
+
+
+
+# Configure the firewall to be able to make SMTP requests to the specified
+# hosts.  Note that this also rejects ident probes with a TCP reset.  This
+# is necessary for broken mail servers that won't accept mail if ident 
+# probes are just dropped.
+for ADDR in `echo $OUTBOUND_SMTP`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append OUTPUT                        \
+              --out-interface $EXTERNAL_INTERFACE    \
+              --protocol tcp                         \
+              --source $EXTERNAL_ADDRESS             \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $ADDR                    \
+              --destination-port 25                  \
+              --match state                          \
+              --state NEW,ESTABLISHED                \
+              --jump ACCEPT
+    $IPTABLES --append INPUT                         \
+              --in-interface $EXTERNAL_INTERFACE     \
+              --protocol tcp                         \
+              --tcp-flags ACK ACK                    \
+              --source $ADDR                         \
+              --source-port 25                       \
+              --destination $EXTERNAL_ADDRESS        \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED                    \
+              --jump ACCEPT
+    $IPTABLES --append INPUT                         \
+              --in-interface $EXTERNAL_INTERFACE     \
+              --protocol tcp                         \
+              --source $ADDR                         \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $EXTERNAL_ADDRESS        \
+              --destination-port 113                 \
+              --jump REJECT                          \
+              --reject-with tcp-reset
+  fi
+done
+
+
+# Configure the firewall to be able to respond to SMTP requests from the
+# specified hosts
+for ADDR in `echo $INBOUND_SMTP`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append INPUT                         \
+              --in-interface $EXTERNAL_INTERFACE     \
+              --protocol tcp                         \
+              --source $ADDR                         \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $EXTERNAL_ADDRESS        \
+              --destination-port 25                  \
+              --match state                          \
+              --state NEW,ESTABLISHED                \
+              --jump ACCEPT
+    $IPTABLES --append OUTPUT                        \
+              --out-interface $EXTERNAL_INTERFACE    \
+              --protocol tcp                         \
+              --tcp-flags ACK ACK                    \
+              --source $EXTERNAL_ADDRESS             \
+              --source-port 25                       \
+              --destination $ADDR                    \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED                    \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to be able to telnet to the specified hosts
+for ADDR in `echo $OUTBOUND_TELNET`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append OUTPUT                        \
+              --out-interface $EXTERNAL_INTERFACE    \
+              --protocol tcp                         \
+              --source $EXTERNAL_ADDRESS             \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $ADDR                    \
+              --destination-port 23                  \
+              --match state                          \
+              --state NEW,ESTABLISHED                \
+              --jump ACCEPT
+    $IPTABLES --append INPUT                         \
+              --in-interface $EXTERNAL_INTERFACE     \
+              --protocol tcp                         \
+              --tcp-flags ACK ACK                    \
+              --source $ADDR                         \
+              --source-port 23                       \
+              --destination $EXTERNAL_ADDRESS        \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED                    \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to allow telnet sessions from the specified hosts
+for ADDR in `echo $INBOUND_TELNET`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append INPUT                         \
+              --in-interface $EXTERNAL_INTERFACE     \
+              --protocol tcp                         \
+              --source $ADDR                         \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $EXTERNAL_ADDRESS        \
+              --destination-port 23                  \
+              --match state                          \
+              --state NEW,ESTABLISHED                \
+              --jump ACCEPT
+    $IPTABLES --append OUTPUT                        \
+              --out-interface $EXTERNAL_INTERFACE    \
+              --protocol tcp                         \
+              --tcp-flags ACK ACK                    \
+              --source $EXTERNAL_ADDRESS             \
+              --source-port 23                       \
+              --destination $ADDR                    \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED                    \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to be able to SSH to the specified hosts
+for ADDR in `echo $OUTBOUND_SSH`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append OUTPUT                     \
+              --out-interface $EXTERNAL_INTERFACE \
+              --protocol tcp                      \
+              --source $EXTERNAL_ADDRESS          \
+              --source-port 600:65535             \
+              --destination $ADDR                 \
+              --destination-port 22               \
+              --match state                       \
+              --state NEW,ESTABLISHED             \
+              --jump ACCEPT
+    $IPTABLES --append INPUT                      \
+              --in-interface $EXTERNAL_INTERFACE  \
+              --protocol tcp                      \
+              --tcp-flags ACK ACK                 \
+              --source $ADDR                      \
+              --source-port 22                    \
+              --destination $EXTERNAL_ADDRESS     \
+              --destination-port 600:65535        \
+              --match state                       \
+              --state ESTABLISHED                 \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to allow SSH connections from the specified hosts
+for ADDR in `echo $INBOUND_SSH`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append INPUT                      \
+              --in-interface $EXTERNAL_INTERFACE  \
+              --protocol tcp                      \
+              --source $ADDR                      \
+              --source-port 600:65535             \
+              --destination $EXTERNAL_ADDRESS     \
+              --destination-port 22               \
+              --match state                       \
+              --state NEW,ESTABLISHED             \
+              --jump ACCEPT
+    $IPTABLES --append OUTPUT                     \
+              --out-interface $EXTERNAL_INTERFACE \
+              --protocol tcp                      \
+              --tcp-flags ACK ACK                 \
+              --source $EXTERNAL_ADDRESS          \
+              --source-port 22                    \
+              --destination $ADDR                 \
+              --destination-port 600:65535        \
+              --match state                       \
+              --state ESTABLISHED                 \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to be able to FTP to the specified hosts.  There's
+# a lot to do here because of both passive-mode and active-mode transfers.
+# Note that the passive-mode stuff is pretty dangerous without the connection
+# tracking and stateful inspection capabilities of the 2.4.x kernel, so this
+# is one way that the 2.4.x kernel is superior to 2.2.x.  Also, note that
+# there is a known security hole in the FTP connection tracking component, so
+# it is important to be on the latest kernel version.
+for ADDR in `echo $OUTBOUND_FTP`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append OUTPUT                        \
+              --out-interface $EXTERNAL_INTERFACE    \
+              --protocol tcp                         \
+              --source $EXTERNAL_ADDRESS             \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $ADDR                    \
+              --destination-port 21                  \
+              --match state                          \
+              --state NEW,ESTABLISHED                \
+              --jump ACCEPT
+    $IPTABLES --append OUTPUT                        \
+              --out-interface $EXTERNAL_INTERFACE    \
+              --protocol tcp                         \
+              --source $EXTERNAL_ADDRESS             \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $ADDR                    \
+              --destination-port 20                  \
+              --match state                          \
+              --state ESTABLISHED                    \
+              --jump ACCEPT
+    $IPTABLES --append OUTPUT                        \
+              --out-interface $EXTERNAL_INTERFACE    \
+              --protocol tcp                         \
+              --source $EXTERNAL_ADDRESS             \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $ADDR                    \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED,RELATED            \
+              --jump ACCEPT
+    $IPTABLES --append INPUT                         \
+              --in-interface $EXTERNAL_INTERFACE     \
+              --protocol tcp                         \
+              --tcp-flags ACK ACK                    \
+              --source $ADDR                         \
+              --source-port 21                       \
+              --destination $EXTERNAL_ADDRESS        \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED                    \
+              --jump ACCEPT
+    $IPTABLES --append INPUT                         \
+              --in-interface $EXTERNAL_INTERFACE     \
+              --protocol tcp                         \
+              --source $ADDR                         \
+              --source-port 20                       \
+              --destination $EXTERNAL_ADDRESS        \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED,RELATED            \
+              --jump ACCEPT
+    $IPTABLES --append INPUT                         \
+              --in-interface $EXTERNAL_INTERFACE     \
+              --protocol tcp                         \
+              --source $ADDR                         \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $EXTERNAL_ADDRESS        \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED                    \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to allow FTP requests from the specified hosts
+for ADDR in `echo $INBOUND_FTP`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append INPUT                         \
+              --in-interface $EXTERNAL_INTERFACE     \
+              --protocol tcp                         \
+              --source $ADDR                         \
+              --source-port $UNPRIVILIGED_PORTS      \
+              --destination $EXTERNAL_ADDRESS        \
+              --destination-port 21                  \
+              --match state                          \
+              --state NEW,ESTABLISHED                \
+              --jump ACCEPT
+    $IPTABLES --append INPUT                         \
+              --in-interface $EXTERNAL_INTERFACE     \
+              --protocol tcp                         \
+              --source $ADDR                         \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $EXTERNAL_ADDRESS        \
+              --destination-port 20                  \
+              --match state                          \
+              --state ESTABLISHED                    \
+              --jump ACCEPT
+    $IPTABLES --append INPUT                         \
+              --in-interface $EXTERNAL_INTERFACE     \
+              --protocol tcp                         \
+              --source $ADDR                         \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $EXTERNAL_ADDRESS        \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED,RELATED            \
+              --jump ACCEPT
+    $IPTABLES --append OUTPUT                        \
+              --out-interface $EXTERNAL_INTERFACE    \
+              --protocol tcp                         \
+              --tcp-flags ACK ACK                    \
+              --source $EXTERNAL_ADDRESS             \
+              --source-port 21                       \
+              --destination $ADDR                    \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED                    \
+              --jump ACCEPT
+    $IPTABLES --append OUTPUT                        \
+              --out-interface $EXTERNAL_INTERFACE    \
+              --protocol tcp                         \
+              --source $EXTERNAL_ADDRESS             \
+              --source-port 20                       \
+              --destination $ADDR                    \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED,RELATED            \
+              --jump ACCEPT
+    $IPTABLES --append OUTPUT                        \
+              --out-interface $EXTERNAL_INTERFACE    \
+              --protocol tcp                         \
+              --source $EXTERNAL_ADDRESS             \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $ADDR                    \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED                    \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to allow make HTTP requests to the specified hosts
+for ADDR in `echo $OUTBOUND_HTTP`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append OUTPUT                        \
+              --out-interface $EXTERNAL_INTERFACE    \
+              --protocol tcp                         \
+              --source $EXTERNAL_ADDRESS             \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $ADDR                    \
+              --destination-port 80                  \
+              --match state                          \
+              --state NEW,ESTABLISHED                \
+              --jump ACCEPT
+    $IPTABLES --append INPUT                         \
+              --in-interface $EXTERNAL_INTERFACE     \
+              --protocol tcp                         \
+              --tcp-flags ACK ACK                    \
+              --source $ADDR                         \
+              --source-port 80                       \
+              --destination $EXTERNAL_ADDRESS        \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED                    \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to allow HTTP requests from the specified hosts
+for ADDR in `echo $INBOUND_HTTP`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append INPUT                         \
+              --in-interface $EXTERNAL_INTERFACE     \
+              --protocol tcp                         \
+              --source $ADDR                         \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $EXTERNAL_ADDRESS        \
+              --destination-port 80                  \
+              --match state                          \
+              --state NEW,ESTABLISHED                \
+              --jump ACCEPT
+    $IPTABLES --append OUTPUT                        \
+              --out-interface $EXTERNAL_INTERFACE    \
+              --protocol tcp                         \
+              --tcp-flags ACK ACK                    \
+              --source $EXTERNAL_ADDRESS             \
+              --source-port 80                       \
+              --destination $ADDR                    \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED                    \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to allow make HTTPS requests to the specified hosts
+for ADDR in `echo $OUTBOUND_HTTPS`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append OUTPUT                        \
+              --out-interface $EXTERNAL_INTERFACE    \
+              --protocol tcp                         \
+              --source $EXTERNAL_ADDRESS             \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $ADDR                    \
+              --destination-port 443                 \
+              --match state                          \
+              --state NEW,ESTABLISHED                \
+              --jump ACCEPT
+    $IPTABLES --append INPUT                         \
+              --in-interface $EXTERNAL_INTERFACE     \
+              --protocol tcp                         \
+              --tcp-flags ACK ACK                    \
+              --source $ADDR                         \
+              --source-port 443                      \
+              --destination $EXTERNAL_ADDRESS        \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED                    \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to allow HTTPS requests from the specified hosts
+for ADDR in `echo $INBOUND_HTTPS`
+do
+  if [ -n "$ADDR" ]
+  then
+    $IPTABLES --append INPUT                         \
+              --in-interface $EXTERNAL_INTERFACE     \
+              --protocol tcp                         \
+              --source $ADDR                         \
+              --source-port $UNPRIVILEGED_PORTS      \
+              --destination $EXTERNAL_ADDRESS        \
+              --destination-port 443                 \
+              --match state                          \
+              --state NEW,ESTABLISHED                \
+              --jump ACCEPT
+    $IPTABLES --append OUTPUT                        \
+              --out-interface $EXTERNAL_INTERFACE    \
+              --protocol tcp                         \
+              --tcp-flags ACK ACK                    \
+              --source $EXTERNAL_ADDRESS             \
+              --source-port 443                      \
+              --destination $ADDR                    \
+              --destination-port $UNPRIVILEGED_PORTS \
+              --match state                          \
+              --state ESTABLISHED                    \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to be able to make the specified generic TCP-based
+# outbound requests
+for GTO_SPEC in `echo $GENERIC_TCP_OUTBOUND`
+do
+  if [ -n "$GTO_SPEC" ]
+  then
+    S_PORT=`echo $GTO_SPEC | cut -d"," -f1`
+    D_ADDR=`echo $GTO_SPEC | cut -d"," -f2`
+    D_PORT=`echo $GTO_SPEC | cut -d"," -f3`
+
+    $IPTABLES --append OUTPUT                      \
+              --out-interface $EXTERNAL_INTERFACE  \
+              --protocol tcp                       \
+              --source $EXTERNAL_ADDRESS           \
+              --source-port $S_PORT                \
+              --destination $D_ADDR                \
+              --destination-port $D_PORT           \
+              --match state                        \
+              --state NEW,ESTABLISHED              \
+              --jump ACCEPT
+    $IPTABLES --append INPUT                       \
+              --in-interface $EXTERNAL_INTERFACE   \
+              --protocol tcp                       \
+              --tcp-flags ACK ACK                  \
+              --source $D_ADDR                     \
+              --source-port $D_PORT                \
+              --destination $EXTERNAL_ADDRESS      \
+              --destination-port $S_PORT           \
+              --match state                        \
+              --state ESTABLISHED                  \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to be able to make the specified generic UDP-based
+# outbound requests
+for GUO_SPEC in `echo $GENERIC_UDP_OUTBOUND`
+do
+  if [ -n "$GUO_SPEC" ]
+  then
+    S_PORT=`echo $GUO_SPEC | cut -d"," -f1`
+    D_ADDR=`echo $GUO_SPEC | cut -d"," -f2`
+    D_PORT=`echo $GUO_SPEC | cut -d"," -f3`
+
+    $IPTABLES --append OUTPUT                      \
+              --out-interface $EXTERNAL_INTERFACE  \
+              --protocol udp                       \
+              --source $EXTERNAL_ADDRESS           \
+              --source-port $S_PORT                \
+              --destination $D_ADDR                \
+              --destination-port $D_PORT           \
+              --match state                        \
+              --state NEW,ESTABLISHED              \
+              --jump ACCEPT
+    $IPTABLES --append INPUT                       \
+              --in-interface $EXTERNAL_INTERFACE   \
+              --protocol udp                       \
+              --source $D_ADDR                     \
+              --source-port $D_PORT                \
+              --destination $EXTERNAL_ADDRESS      \
+              --destination-port $S_PORT           \
+              --match state                        \
+              --state ESTABLISHED                  \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to be able to accept the specified generic TCP-based
+# inbound requests
+for GTI_SPEC in `echo $GENERIC_TCP_INBOUND`
+do
+  if [ -n "$GTI_SPEC" ]
+  then
+    S_ADDR=`echo $GTI_SPEC | cut -d"," -f1`
+    S_PORT=`echo $GTI_SPEC | cut -d"," -f2`
+    D_PORT=`echo $GTI_SPEC | cut -d"," -f3`
+
+    $IPTABLES --append INPUT                       \
+              --in-interface $EXTERNAL_INTERFACE   \
+              --protocol tcp                       \
+              --source $S_ADDR                     \
+              --source-port $S_PORT                \
+              --destination $EXTERNAL_ADDRESS      \
+              --destination-port $D_PORT           \
+              --match state                        \
+              --state NEW,ESTABLISHED              \
+              --jump ACCEPT
+    $IPTABLES --append OUTPUT                      \
+              --out-interface $EXTERNAL_INTERFACE  \
+              --protocol tcp                       \
+              --source $EXTERNAL_ADDRESS           \
+              --source-port $D_PORT                \
+              --destination $S_ADDR                \
+              --destination-port $S_PORT           \
+              --match state                        \
+              --state ESTABLISHED                  \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to be able to accept the specified generic UDP-based
+# inbound requests
+for GUI_SPEC in `echo $GENERIC_UDP_INBOUND`
+do
+  if [ -n "$GUI_SPEC" ]
+  then
+    S_ADDR=`echo $GUI_SPEC | cut -d"," -f1`
+    S_PORT=`echo $GUI_SPEC | cut -d"," -f2`
+    D_PORT=`echo $GUI_SPEC | cut -d"," -f3`
+
+    $IPTABLES --append INPUT                       \
+              --in-interface $EXTERNAL_INTERFACE   \
+              --protocol udp                       \
+              --source $S_ADDR                     \
+              --source-port $S_PORT                \
+              --destination $EXTERNAL_ADDRESS      \
+              --destination-port $D_PORT           \
+              --match state                        \
+              --state NEW,ESTABLISHED              \
+              --jump ACCEPT
+    $IPTABLES --append OUTPUT                      \
+              --out-interface $EXTERNAL_INTERFACE  \
+              --protocol udp                       \
+              --source $EXTERNAL_ADDRESS           \
+              --source-port $D_PORT                \
+              --destination $S_ADDR                \
+              --destination-port $S_PORT           \
+              --match state                        \
+              --state ESTABLISHED                  \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to pass through the specified kinds of TCP traffic.
+# This is kind of complex because if not done right, a malicious client could
+# connect directly to the internal host and port in addition to the firewall
+# on the intended destination port.  To take care of that, we add a deny
+# rule to the NAT table before the DNAT rule.  Also, it is necessary to have
+# a FORWARD rule to allow the traffic through.
+for TPT_SPEC in `echo $TCP_PASSTHROUGH`
+do
+  if [ -n "$TPT_SPEC" ]
+  then
+    S_ADDR=`echo $TPT_SPEC | cut -d"," -f1`
+    S_PORT=`echo $TPT_SPEC | cut -d"," -f2`
+    O_PORT=`echo $TPT_SPEC | cut -d"," -f3`
+    P_ADDR=`echo $TPT_SPEC | cut -d"," -f4`
+    P_PORT=`echo $TPT_SPEC | cut -d"," -f5`
+
+    $IPTABLES --table nat                          \
+              --append PREROUTING                  \
+              --in-interface $EXTERNAL_INTERFACE   \
+              --protocol tcp                       \
+              --source $S_ADDR                     \
+              --source-port $S_PORT                \
+              --destination $P_ADDR                \
+              --destination-port $P_PORT           \
+              --match state                        \
+              ! --state ESTABLISHED                \
+              --jump DROP
+    $IPTABLES --table nat                          \
+              --append PREROUTING                  \
+              --in-interface $EXTERNAL_INTERFACE   \
+              --protocol tcp                       \
+              --source $S_ADDR                     \
+              --source-port $S_PORT                \
+              --destination $EXTERNAL_ADDRESS      \
+              --destination-port $O_PORT           \
+              --match state                        \
+              --state NEW,ESTABLISHED              \
+              --jump DNAT                          \
+              --to $P_ADDR:$P_PORT
+    $IPTABLES --append FORWARD                     \
+              --in-interface $EXTERNAL_INTERFACE   \
+              --out-interface $INTERNAL_INTERFACE  \
+              --protocol tcp                       \
+              --source $S_ADDR                     \
+              --source-port $S_PORT                \
+              --destination $P_ADDR                \
+              --destination-port $P_PORT           \
+              --match state                        \
+              --state NEW,ESTABLISHED              \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to pass through the specified kinds of UDP traffic.
+# This is kind of complex because if not done right, a malicious client could
+# connect directly to the internal host and port in addition to the firewall
+# on the intended destination port.  To take care of that, we add a deny
+# rule to the NAT table before the DNAT rule.  Also, it is necessary to have
+# a FORWARD rule to allow the traffic through.
+for UPT_SPEC in `echo $UDP_PASSTHROUGH`
+do
+  if [ -n "$UPT_SPEC" ]
+  then
+    S_ADDR=`echo $UPT_SPEC | cut -d"," -f1`
+    S_PORT=`echo $UPT_SPEC | cut -d"," -f2`
+    O_PORT=`echo $UPT_SPEC | cut -d"," -f3`
+    P_ADDR=`echo $UPT_SPEC | cut -d"," -f4`
+    P_PORT=`echo $UPT_SPEC | cut -d"," -f5`
+
+    $IPTABLES --table nat                          \
+              --append PREROUTING                  \
+              --in-interface $EXTERNAL_INTERFACE   \
+              --protocol udp                       \
+              --source $S_ADDR                     \
+              --source-port $S_PORT                \
+              --destination $P_ADDR                \
+              --destination-port $P_PORT           \
+              --match state                        \
+              ! --state ESTABLISHED                \
+              --jump DROP
+    $IPTABLES --table nat                          \
+              --append PREROUTING                  \
+              --in-interface $EXTERNAL_INTERFACE   \
+              --protocol udp                       \
+              --source $S_ADDR                     \
+              --source-port $S_PORT                \
+              --destination $EXTERNAL_ADDRESS      \
+              --destination-port $O_PORT           \
+              --match state                        \
+              --state NEW,ESTABLISHED              \
+              --jump DNAT                          \
+              --to $P_ADDR:$P_PORT
+    $IPTABLES --append FORWARD                     \
+              --in-interface $EXTERNAL_INTERFACE   \
+              --out-interface $INTERNAL_INTERFACE  \
+              --protocol udp                       \
+              --source $S_ADDR                     \
+              --source-port $S_PORT                \
+              --destination $P_ADDR                \
+              --destination-port $P_PORT           \
+              --match state                        \
+              --state NEW,ESTABLISHED              \
+              --jump ACCEPT
+  fi
+done
+
+
+# Configure the firewall to pass through all traffic from a specified external
+# address to a specified internal address.  This is dangerous as a general rule,
+# but may be necessary for certain kinds of VPN software to work properly.
+for CPT_SPEC in `echo $COMPLETE_PASSTHROUGH`
+do
+  if [ -n "$CPT_SPEC" ]
+  then
+    S_ADDR=`echo $CPT_SPEC | cut -d"," -f1`
+    D_ADDR=`echo $CPT_SPEC | cut -d"," -f2`
+
+    $IPTABLES --table nat                          \
+              --append PREROUTING                  \
+              --in-interface $EXTERNAL_INTERFACE   \
+              --source $S_ADDR                     \
+              --destination $D_ADDR                \
+              --match state                        \
+              ! --state ESTABLISHED                \
+              --jump DROP
+    $IPTABLES --table nat                          \
+              --append PREROUTING                  \
+              --in-interface $EXTERNAL_INTERFACE   \
+              --source $S_ADDR                     \
+              --destination $EXTERNAL_ADDRESS      \
+              --match state                        \
+              --state NEW,ESTABLISHED,RELATED      \
+              --jump DNAT                          \
+              --to $D_ADDR              
+    $IPTABLES --append FORWARD                     \
+              --in-interface $EXTERNAL_INTERFACE   \
+              --out-interface $INTERNAL_INTERFACE  \
+              --source $S_ADDR                     \
+              --match state                        \
+              --state NEW,ESTABLISHED,RELATED      \
+              --jump ACCEPT
+  fi
+done
+
+
+# Allow all traffic on the internal network to access the firewall on the
+# internal interface.
+$IPTABLES --append INPUT                       \
+          --in-interface $INTERNAL_INTERFACE   \
+          --source $INTRANET_RANGE             \
+          --jump ACCEPT
+$IPTABLES --append OUTPUT                      \
+          --out-interface $INTERNAL_INTERFACE  \
+          --destination $INTRANET_RANGE        \
+          --jump ACCEPT
+
+#Added 10/3/2003 CJ to allow DHCP traffic on the internal interface.
+
+$IPTABLES --append INPUT                     \
+          --in-interface $INTERNAL_INTERFACE \
+          --protocol udp                     \
+          --destination-port 67              \
+          --jump ACCEPT                      
+$IPTABLES --append OUTPUT                     \
+          --out-interface $INTERNAL_INTERFACE \
+          --protocol udp                      \
+          --source-port 67                    \
+          --jump ACCEPT                       
+         
+
+
+# Allow forwarding from the internal interface out, and to the internal
+# interface in for related connections
+$IPTABLES --append FORWARD                     \
+          --out-interface $EXTERNAL_INTERFACE  \
+          --source $INTRANET_RANGE             \
+          --match state                        \
+          --state NEW,ESTABLISHED,RELATED      \
+          --jump ACCEPT
+$IPTABLES --append FORWARD                     \
+          --out-interface $INTERNAL_INTERFACE  \
+          --destination $INTRANET_RANGE        \
+          --match state                        \
+          --state ESTABLISHED,RELATED          \
+          --jump ACCEPT
+
+
+# Masquerade all traffic from the internal network to the outside world.
+# Note that outbound traffic from internal addresses has access to things that
+# the firewall itself cannot access.  That is because the OUTPUT chain has a
+# default DROP policy, whereas the FORWARD chain has a default ACCEPT policy.
+# If you want to be more granular in what you allow internal clients to access,
+# then there will be a lot more rules than just this one.
+$IPTABLES --table nat                          \
+          --append POSTROUTING                 \
+          --out-interface $EXTERNAL_INTERFACE  \
+          --source $INTRANET_RANGE             \
+          --jump MASQUERADE

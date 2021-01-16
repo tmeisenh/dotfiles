@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# Launches a Docker container as a playground.
+# Convention is $1 points to a directory that contains a Dockerfile
+
+docker rm -f $1
+docker build -t $1 $1
+docker run --name $1 --interactive --volume $(pwd):/playground --tty $1 /bin/bash

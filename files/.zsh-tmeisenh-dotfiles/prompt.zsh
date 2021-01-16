@@ -5,20 +5,20 @@
 # prompt.zsh setup - sets up git, works with zprezto as well
 #********************************************************************
 
-function prompt_tmeisenh_precmd {
+function prompt_tmeisenh_precmd() {
   vcs_info
   print -Pn "\033]0;%n@%m%#  %~  %W :: %T\a"
 }
 
-function prompt_tmeisenh_preexec {
+function prompt_tmeisenh_preexec() {
   print -Pn "\033]0;%n@%m%#  <$1>  %W :: %T\a"
 }
 
-function prompt_char {
+function prompt_char() {
   if [ $UID -eq 0 ]; then echo "#"; else echo "%%"; fi
 }
 
-function prompt_tmeisenh_setup {
+function prompt_tmeisenh_setup() {
   setopt LOCAL_OPTIONS
   unsetopt XTRACE KSH_ARRAYS
   prompt_opts=(cr percent subst)

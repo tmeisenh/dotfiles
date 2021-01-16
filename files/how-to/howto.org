@@ -1,0 +1,64 @@
+* Burn CDs
+# Audio CDs rip the CD to WAV files
+sudo cdda2wav -B -Owav dev=/dev/acd0
+
+# Audio CDs burn the WAV files to the CD 
+sudo cdrecord -v driveropts=burnfree -immed -audio -dao dev=2,1,0 -useinfo *.wav
+
+# Also, might have to find the device location for the burner...
+sudo cdrecord -scanbus
+
+## OS X
+Open DiskUtility
+Select File > New > Disk Image From Folder
+Search for /Volumes
+The audio cd to copy should be there.  Select it.
+Make sure the image format is DVD/CD master
+
+* GPG
+gpg --list-keys
+
+gpg --output mykey_pub.gpg -armor --export $GPGKEY
+gpg --output mykey_sec.gpg -armor --export-secret-key $GPGKEY
+
+copy pub and sec over to remote host.
+
+import
+gpg --import /path/to/file/mykey_pub.gpg
+gpg --import --allow-secret-key-import /path/to/file/mykey_sec.gpg
+
+verify keys
+gpg --list-keys
+
+* encrypt data
+  file=filename
+  public_key=/path/to/public/key
+  key=${file}.key
+  encrypted_key=${key}.encrypted
+  encrypted_file=${file}.encrypted
+  
+  create random key
+  use key to encrypt
+  encrypt key and store encrypted key and data separately
+
+  openssl rand -base64 32 > ${key} 2> /dev/null
+  openssl enc -e -aes-256-cbc -kfile ${key} -in ${file} -out ${encrypted_file}
+  openssl rsautl -encrypt -pubin -inkey ${public_key} -in ${key} -out ${encrypted_key}
+* decrypt data
+  file=filename
+  private_key=/path/to/private/key/pem
+  key=${file}.key
+  encrypted_key=${key}.encrypted
+  encrypted_file=${file}.encrypted
+  openssl rsautl -decrypt -inkey ${private_key} -in ${encrypted_key} -out ${key}
+  openssl enc -d -aes-256-cbc -kfile ${key} -in ${encrypted_file} -out ${file}
+* program vortex race3 keyboard
+  - switch to the appropriate layer
+  - Right-Control plus FN to enter into programming mode
+    - solid blue light on the right side of the space bar is on
+  - Press the target key until the key bottoms out
+    - flashing red light on the right side of the space bar is on
+  - Press the destination key or key sequence
+  - Press PN to "commit"
+    - solid blue light on the right side of the space bar is on
+  - Press Right-Control plus FN to end programming mode.
