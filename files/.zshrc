@@ -113,7 +113,7 @@ if [[ -s "${ZSHCONF}/$(hostname | tr "[:upper:]" "[:lower:]").zsh" ]]; then
 fi
 
 # Load private (not stored in git) settings
-source $ZSHCONF/private.zsh
+[[ -e $ZSHCONF/private.zsh ]] && source $ZSHCONF/private.zsh
 
 # Load anything specific to a work project
 for f in $ZSHCONF/projects/*; do source $f; done
