@@ -26,6 +26,7 @@ co = checkout
 dc = diff --cached
 di = diff
 lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+csv= log --format=format:%H|%an|%d|%cs
 p = push -u origin HEAD
 punch = push --force-with-lease
 st = status
