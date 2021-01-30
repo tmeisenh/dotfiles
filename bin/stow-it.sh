@@ -6,6 +6,7 @@ target=$HOME
 force=""
 pretend=""
 delete=""
+vscode="$HOME/Library/Application Support/Code/User"
 
 usage() {
   cat <<EOF
@@ -61,6 +62,7 @@ stow_check() {
 
 stow_it() {
   stow --verbose $pretend $delete --target="$target" $force files || echo "Unable to stow."
+  stow --verbose $pretend $delete --target="${vscode}" $force vscode || echo "Unable to stow vscode."
 }
 
 stow_check
