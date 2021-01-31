@@ -1,5 +1,4 @@
 # ignore private settings
 *.DS_Store
 files/.vim/bundle/
-
-zsh/private.zsh
+files/.zsh-tmeisenh-dotfiles/private.zsh
