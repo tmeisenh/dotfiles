@@ -1,0 +1,11 @@
+// Place your key bindings in this file to override the defaultsauto[]
+[
+  {
+    "key": "ctrl+shift+j",
+    "command": "spaceBlockJumper.moveDown"
+  },
+  {
+    "key": "ctrl+shift+h",
+    "command": "spaceBlockJumper.moveUp"
+  }
+]
