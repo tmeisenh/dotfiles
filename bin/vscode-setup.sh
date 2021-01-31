@@ -12,6 +12,7 @@ echo
 EXTENSION=(
 andys8.jest-snippets
 christian-kohler.npm-intellisense
+Compulim.vscode-clock
 cssho.vscode-svgviewer
 dbaeumer.vscode-eslint
 eamodio.gitlens
