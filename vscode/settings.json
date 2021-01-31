@@ -159,17 +159,11 @@
   "vim.useSystemClipboard": true,
   "vim.normalModeKeyBindingsNonRecursive": [
     {
-      "before": [
-        "<space>"
-      ],
-      "commands": [
-        "vspacecode.space"
-      ]
+      "before": ["<space>"],
+      "commands": ["vspacecode.space"]
     },
     {
-      "before": [
-        ","
-      ],
+      "before": [","],
       "commands": [
         "vspacecode.space",
         {
@@ -181,17 +175,11 @@
   ],
   "vim.visualModeKeyBindingsNonRecursive": [
     {
-      "before": [
-        "<space>"
-      ],
-      "commands": [
-        "vspacecode.space"
-      ]
+      "before": ["<space>"],
+      "commands": ["vspacecode.space"]
     },
     {
-      "before": [
-        ","
-      ],
+      "before": [","],
       "commands": [
         "vspacecode.space",
         {
@@ -199,6 +187,15 @@
           "args": "m"
         }
       ]
+    }
+  ],
+  // space code over-rides
+  "vspacecode.bindingOverrides": [
+    {
+      "keys": "f.f",
+      "name": "Open file/folder",
+      "type": "command",
+      "command": "workbench.action.quickOpen"
     }
   ]
 }
