@@ -2,6 +2,8 @@
   "window.zoomLevel": 0,
   "explorer.openEditors.visible": 0,
   "workbench.editor.showIcons": false,
+  "workbench.editor.showTabs": true,
+  "workbench.activityBar.visible": true,
   "editor.cursorStyle": "line-thin",
   "editor.fontFamily": "Source Code Pro",
   "editor.fontSize": 18,
@@ -157,5 +159,6 @@
   "workbench.colorTheme": "Gruvbox Dark (Hard)",
   "editor.codeLens": true,
   "prettier.singleQuote": true,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "workbench.startupEditor": "none"
 }
