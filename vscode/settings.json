@@ -39,7 +39,11 @@
     "editorLineNumber.foreground": "#404060F0",
     "editorLineNumber.activeForeground": "#60607090",
     "editor.lineHighlightBorder": "#40404020",
-    "editorCursor.foreground": "#909090A0"
+    "editorCursor.foreground": "#909090A0",
+    "statusBar.background": "#00af00",
+    "statusBar.foreground": "#000000",
+    "statusBarItem.remoteBackground": "#00af00",
+    "statusBarItem.remoteForeground": "#000000"
   },
   "editor.minimap.renderCharacters": true,
   "breadcrumbs.enabled": true,
