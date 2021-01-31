@@ -46,6 +46,7 @@ focus pane
 
 ```
 command 0, 1, 2, etc
+control H, L
 ```
 
 split new pane
