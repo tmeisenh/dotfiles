@@ -198,6 +198,12 @@
       "command": "workbench.action.quickOpen"
     },
     {
+      "keys": "j.d",
+      "name": "Jump to def.",
+      "type": "command",
+      "command": "editor.action.goToDeclaration"
+    },
+    {
       "keys": "p.t",
       "name": "Toggle tree/explorer view",
       "type": "conditional",
