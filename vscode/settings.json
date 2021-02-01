@@ -196,6 +196,25 @@
       "name": "Open file/folder",
       "type": "command",
       "command": "workbench.action.quickOpen"
+    },
+    {
+      "keys": "p.t",
+      "name": "Toggle tree/explorer view",
+      "type": "conditional",
+      "bindings": [
+        {
+          "key": "",
+          "name": "Show explorer view",
+          "type": "command",
+          "command": "workbench.view.explorer"
+        },
+        {
+          "key": "when:sideBarVisible && explorerViewletVisible",
+          "name": "Hide side bar",
+          "type": "command",
+          "command": "workbench.action.toggleSidebarVisibility"
+        }
+      ]
     }
   ]
 }
