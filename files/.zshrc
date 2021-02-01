@@ -10,12 +10,11 @@
 
 # Some environment variables and settings
 export USER=$(id -un)
-export HOSTNAME=$(/bin/hostname)
+export HOSTNAME=$(hostname)
 export LC_ALL=en_US.utf-8
 export LANG=$LC_ALL
-export EDITOR='vi'
+export EDITOR='vi'    # For shell things I prefer vi/vim.
 export PAGER='less'
-export ZLS_COLORS=$LS_COLORS
 export ZSHCACHEDIR=$HOME/.zsh-cache
 export ZSHCONF=$HOME/.zsh-tmeisenh-dotfiles
 bindkey -v #vi key bindings
@@ -71,6 +70,7 @@ manpath=(
 
 # Load custom LS_COLORS
 [[ -e $ZSHCONF/ls_colors.sh ]] && source $ZSHCONF/ls_colors.sh
+export ZLS_COLORS=$LS_COLORS
 
 # Use hard limits, except for a smaller stack and no core dumps
 unlimit
@@ -91,7 +91,7 @@ source $ZSHCONF/completions.zsh
 # Configure keys working (never works by default)
 source $ZSHCONF/keys.zsh
 
-# Configure prompt to my specifications
+# Configure prompt
 source $ZSHCONF/prompt.zsh
 
 # Load system wide aliases

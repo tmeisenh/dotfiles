@@ -16,6 +16,9 @@ VIM_LESS=$(brew --prefix vim)/share/vim/vim82/macros/less.sh
 alias less=${VIM_LESS}
 alias ctags-objc="ctags --languages=objectivec --langmap=objectivec:.h.m"
 
+# Use gnu-ls if available otherwise use the (freebsd) version
+gls &>/dev/null 2>&1 && alias ls="gls --color -F -T 0 -b -h -X -H" || alias ls="ls -F -T -b -h -C -G"
+
 export MANPAGER="col -b | ${VIM_LESS} -c 'set ft=man nomod nolist nofoldenable' -"
 export GIT_PAGER='less'
 export GIT_EDITOR='vim'
