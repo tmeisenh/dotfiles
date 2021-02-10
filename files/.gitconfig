@@ -49,5 +49,10 @@ default = simple
 
 [pull]
 rebase = true
+
 [init]
 defaultBranch = master
+
+; Include gitconfig for work that over-rides name/email/key and isn't stored dotfiles.
+[include]
+path = ~/.gitconfig.work
