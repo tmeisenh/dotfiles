@@ -30,7 +30,6 @@ setopt nullglob
 # History Options
 setopt append_history
 setopt extended_history
-setopt inc_append_history
 setopt bang_hist
 setopt hist_ignore_dups
 setopt share_history

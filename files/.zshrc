@@ -31,8 +31,8 @@ bindkey -v #vi key bindings
 watch=(notme root)
 
 # Create $user history files
-HISTSIZE=10000
-SAVEHIST=65536
+HISTSIZE=1000000
+SAVEHIST=1000000
 DIRSTACKSIZE=16
 HISTFILE=$HOME/.zsh_history
 
