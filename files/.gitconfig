@@ -29,6 +29,9 @@ lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen
 csv= log --format=format:%H|%an|%d|%cs
 p = push -u origin HEAD
 punch = push --force-with-lease
+rhu = !git fetch && git reset --hard @{u}
+remaster = !git fetch && git rebase origin/master
+rebar = !git fetch && git rebase --interactive origin/master 
 st = status
 stats=shortlog --numbered --summary
 staged = diff --staged

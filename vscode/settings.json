@@ -222,5 +222,6 @@
         }
       ]
     }
-  ]
+  ],
+  "json.maxItemsComputed": 5000000
 }
