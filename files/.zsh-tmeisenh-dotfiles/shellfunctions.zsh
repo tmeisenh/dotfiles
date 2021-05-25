@@ -151,3 +151,7 @@ function check_CSR() {
 function home_status() {
   (cd ~/git/dotfiles; git st)
 }
+
+function load_keys() {
+  find ~/.ssh -type f -name "*.pub" | xargs -L 1 -n 1 -I echo  | sed 's/\.pub//g' | ssh-add -K
+}

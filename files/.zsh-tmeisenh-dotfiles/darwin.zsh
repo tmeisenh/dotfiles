@@ -60,6 +60,11 @@ upgrade_homebrew() {
   brew upgrade
 }
 
+fix_screensaver() {
+  local halfHour=1800
+  defaults -currentHost write com.apple.screensaver idleTime ${halfHour}
+}
+
 #********************************************************************
 # environment stuff
 #********************************************************************
