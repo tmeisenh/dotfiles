@@ -4,7 +4,7 @@
   "workbench.editor.showIcons": false,
   "workbench.editor.showTabs": true,
   "workbench.activityBar.visible": true,
-  "editor.cursorStyle": "line-thin",
+  "editor.cursorStyle": "line",
   "editor.fontFamily": "Source Code Pro",
   "editor.fontSize": 18,
   "editor.fontWeight": "400",
@@ -63,6 +63,7 @@
   "editor.gotoLocation.multipleDefinitions": "goto",
   "editor.gotoLocation.multipleImplementations": "goto",
   "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.preferences.importModuleSpecifier": "relative",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -137,8 +138,10 @@
     "Ebitda",
     "Formik",
     "SIGNATUREDATA",
+    "estypes",
     "homescreen",
     "innerhtml",
+    "nestjs",
     "port",
     "prettierrc",
     "process",
@@ -148,7 +151,7 @@
     "uuidv",
     "verifone"
   ],
-  "typescript.tsserver.log": "verbose",
+  "typescript.tsserver.log": "off",
   "typescript.tsserver.maxTsServerMemory": 4092,
   "workbench.colorTheme": "Gruvbox Dark (Hard)",
   "editor.codeLens": true,
@@ -223,5 +226,11 @@
       ]
     }
   ],
-  "json.maxItemsComputed": 5000000
+  "json.maxItemsComputed": 5000000,
+  "editor.tabSize": 8,
+  "editor.insertSpaces": false,
+  "editor.lineNumbers": "on",
+  "editor.wordSeparators": "/\\()\"':,.;<>~!@#$%^&*|+=[]{}`?-",
+  "editor.wordWrap": "off",
+  "security.workspace.trust.untrustedFiles": "open"
 }

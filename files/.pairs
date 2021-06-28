@@ -2,7 +2,6 @@ pairs:
   tm: Travis Meisenheimer; travis.meisenheimer
 
 email:
-  prefix: ionicmobile
-  domain: asynchrony.com
+  domain: wwt.com
   no_solo_prefix: true
 global: true
