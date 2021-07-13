@@ -49,20 +49,24 @@ hash -d log=/var/log
 
 # Usage: diskeject drive_number
 # Description: kills a process
-diskeject() {
+function diskeject() {
   echo -n "unmounting drive $1..."
   drutil tray eject -drive $1
 }
 
-upgrade_homebrew() {
+function upgrade_homebrew() {
   brew update --verbose
   brew outdated
   brew upgrade
 }
 
-fix_screensaver() {
+function fix_screensaver() {
   local halfHour=1800
   defaults -currentHost write com.apple.screensaver idleTime ${halfHour}
+}
+
+function prevent_sleep() {
+  sudo pmset -a disablesleep 1
 }
 
 #********************************************************************

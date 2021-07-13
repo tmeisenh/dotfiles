@@ -2,3 +2,4 @@
 *.DS_Store
 files/.vim/bundle/
 files/.zsh-tmeisenh-dotfiles/private.zsh
+files/.zsh-tmeisenh-dotfiles/projects
