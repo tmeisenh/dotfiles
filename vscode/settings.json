@@ -24,7 +24,12 @@
   "terminal.integrated.fontFamily": "Source Code Pro, Menlo, Monaco, 'Courier New', monospace",
   "terminal.integrated.fontSize": 12,
   "terminal.integrated.cursorStyle": "line",
-  "terminal.integrated.automationShell.osx": "$HOME/bin/tmux-from-here.sh",
+  "terminal.integrated.profiles.osx": {
+    "travis": {
+      "path": "~/bin/tmux-from-here.sh"
+    }
+  },
+  "terminal.integrated.defaultProfile.osx": "tmux",
   "search.exclude": {
     "**/node_modules": true,
     "**/bower_components": true,
