@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+docker volume prune --force
 docker ps --all --quiet | xargs -L 1 -n 1 docker rm
 docker image ls --all --quiet | xargs -L 1 -n 1 docker rmi
 
