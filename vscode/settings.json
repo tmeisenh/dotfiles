@@ -29,7 +29,7 @@
       "path": "~/bin/tmux-from-here.sh"
     }
   },
-  "terminal.integrated.defaultProfile.osx": "tmux",
+  "terminal.integrated.defaultProfile.osx": "zsh",
   "search.exclude": {
     "**/node_modules": true,
     "**/bower_components": true,
