@@ -14,8 +14,8 @@ Bundle 'tpope/vim-vividchalk'
 Bundle 'w0ng/vim-hybrid'
 
 " git
-" Bundle 'tpope/vim-fugitive'
-Bundle 'airblade/vim-gitgutter'
+"Bundle 'tpope/vim-fugitive'
+"Bundle 'airblade/vim-gitgutter'
 
 " themes
 Bundle 'tpope/vim-unimpaired'
