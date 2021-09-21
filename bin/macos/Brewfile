@@ -38,7 +38,6 @@ brew "wget"
 brew "zsh"
 brew "d12frosted/emacs-plus/emacs-plus", args: ["with-ctags"]
 brew "universal-ctags/universal-ctags/universal-ctags", args: ["HEAD"], link: false
-cask "1password"
 cask "aerial"
 cask "cheatsheet"
 cask "disk-inventory-x"
