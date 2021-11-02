@@ -32,7 +32,8 @@ punch = push --force-with-lease
 rhu = !git fetch && git reset --hard @{u}
 rl = reflog --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 remaster = !git fetch && git rebase origin/master
-rebar = !git fetch && git rebase --interactive origin/master 
+remain = !git fetch && git rebase origin/main
+; rebar = !git fetch && git rebase --interactive origin/master 
 st = status
 stats=shortlog --numbered --summary
 staged = diff --staged
