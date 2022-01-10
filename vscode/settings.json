@@ -11,11 +11,13 @@
   "editor.minimap.enabled": false,
   "editor.minimap.maxColumn": 60,
   "files.exclude": {
-    "**/karma_html": true,
+    "**/.DS_Store": true,
     "**/.git": true,
-    "**/.svn": true,
     "**/.hg": true,
-    "**/.DS_Store": true
+    "**/.svn": true,
+    "**/dist": true,
+    "**/karma_html": true,
+    "**/node_modules": true
   },
   "editor.snippetSuggestions": "top",
   "workbench.editor.enablePreviewFromQuickOpen": false,
