@@ -141,9 +141,8 @@
   "cSpell.userWords": [
     "Boop",
     "Ebitda",
-    "Formik",
-    "SIGNATUREDATA",
     "estypes",
+    "Formik",
     "homescreen",
     "innerhtml",
     "keyfield",
@@ -152,7 +151,9 @@
     "prettierrc",
     "process",
     "referencewriter",
+    "SIGNATUREDATA",
     "testid",
+    "theo",
     "troutd",
     "uuidv",
     "verifone"
@@ -240,5 +241,14 @@
   "security.workspace.trust.untrustedFiles": "open",
   "editor.renderControlCharacters": true,
   "editor.formatOnPaste": true,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[dockerfile]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[xml]": {
+    "editor.defaultFormatter": "DotJoshJohnson.xml"
+  }
 }
