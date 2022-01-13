@@ -35,3 +35,6 @@ alias dtsp="date +%F"
 
 alias vi="vim"
 alias svi="sudo vim"
+# bash bulletin man pages!!
+alias help='function _help(){ bash -c "help $1"; };_help'
+
