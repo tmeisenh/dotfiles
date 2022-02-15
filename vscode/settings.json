@@ -17,7 +17,11 @@
     "**/.svn": true,
     "**/dist": true,
     "**/karma_html": true,
-    "**/node_modules": true
+    "**/node_modules": true,
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true
   },
   "editor.snippetSuggestions": "top",
   "workbench.editor.enablePreviewFromQuickOpen": false,
@@ -158,7 +162,8 @@
     "theo",
     "troutd",
     "uuidv",
-    "verifone"
+    "verifone",
+    "xread"
   ],
   "typescript.tsserver.log": "off",
   "typescript.tsserver.maxTsServerMemory": 4092,
