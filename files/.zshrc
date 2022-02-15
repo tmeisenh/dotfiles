@@ -31,10 +31,10 @@ bindkey -v #vi key bindings
 watch=(notme root)
 
 # Create $user history files
-HISTSIZE=1000000
-SAVEHIST=1000000
-DIRSTACKSIZE=16
-HISTFILE=$HOME/.zsh_history
+export HISTSIZE=1000000
+export SAVEHIST=1000000
+export DIRSTACKSIZE=16
+export HISTFILE=$HOME/.zsh_history
 
 # Load some cool zsh features
 typeset -U path cdpath manpath fpath
