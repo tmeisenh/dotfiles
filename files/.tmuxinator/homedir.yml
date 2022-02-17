@@ -1,9 +1,0 @@
-name: homedir
-
-windows:
-  - homedir:
-      root: ~/git/homedir
-      layout: main-vertical
-      panes:
-        - git graph
-        - vim .
