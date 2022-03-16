@@ -256,6 +256,7 @@
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
   "[xml]": {
-    "editor.defaultFormatter": "DotJoshJohnson.xml"
-  }
+    "editor.defaultFormatter": "redhat.vscode-xml"
+  },
+  "redhat.telemetry.enabled": false
 }

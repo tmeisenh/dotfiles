@@ -32,15 +32,27 @@ EXTENSION=(
     ms-dotnettools.csharp
     ms-vscode-remote.remote-containers
     ms-vscode.cpptools
+    naco-siren.gradle-language
     naumovs.color-highlight
     rbbit.typescript-hero
+    redhat.fabric8-analytics
+    redhat.java
+    redhat.vscode-xml
     shd101wyy.markdown-preview-enhanced
     skyran.js-jsx-snippets
     streetsidesoftware.code-spell-checker
     stylelint.vscode-stylelint
     tomphilbin.gruvbox-themes
+    VisualStudioExptTeam.vscodeintellicode
+    vscjava.vscode-gradle
+    vscjava.vscode-java-debug
+    vscjava.vscode-java-dependency
+    vscjava.vscode-java-pack
+    vscjava.vscode-java-test
+    vscjava.vscode-maven
     vscodevim.vim
-    yzhang.markdown-all-in-one)
+    yzhang.markdown-all-in-one
+)
 
 echo "Removing all old extensions"
 rm -rf ~/.vscode/extensions
