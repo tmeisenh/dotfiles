@@ -258,5 +258,8 @@
   "[xml]": {
     "editor.defaultFormatter": "redhat.vscode-xml"
   },
-  "redhat.telemetry.enabled": false
+  "redhat.telemetry.enabled": false,
+  "[java]": {
+    "editor.defaultFormatter": "redhat.java"
+  }
 }
