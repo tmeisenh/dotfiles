@@ -1,4 +1,4 @@
-# Z shell configuration file
+# Z shell configuration file for "core" aliases
 #
 # Author: Travis Meisenheimer <travis@indexoutofbounds.com>
 #
@@ -37,4 +37,3 @@ alias vi="vim"
 alias svi="sudo vim"
 # bash bulletin man pages!!
 alias help='function _help(){ bash -c "help $1"; };_help'
-

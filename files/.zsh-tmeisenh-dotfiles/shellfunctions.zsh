@@ -136,6 +136,7 @@ function normalize_filename() {
   mv -f "$1" "${1// /_}"
 }
 
+# ssl certs
 function read_x509() {
   openssl x509 -noout -text -in $1
 }
@@ -149,6 +150,28 @@ function check_CSR() {
 }
 
 function home_status() {
-  (cd ~/git/dotfiles; git st)
+  (
+    cd ~/git/dotfiles
+    git st
+  )
 }
 
+# k8s
+alias ks="kubectl exec --tty -it --namespace"
+alias kp="kubectl get pod --namespace"
+alias klf="kubectl logs --follow --namespace"
+
+function klogs() {
+  kubectl logs --follow --namespace $1 $2
+}
+
+# function kexec() {
+#   kubectl exec -it --namespace $1 $2 -- /bin/sh
+# }
+
+function kexec() {
+  local env=$1
+  local pod=$2
+  local first_pod=$(kubectl get pod --namespace $env | /usr/bin/grep $pod | head -n 1 | cut -d " " -f1)
+  kubectl exec -it --namespace $env $first_pod -- /bin/sh
+}

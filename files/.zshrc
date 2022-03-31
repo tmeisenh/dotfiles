@@ -13,7 +13,7 @@ export USER=$(id -un)
 export HOSTNAME=$(hostname)
 export LC_ALL=en_US.utf-8
 export LANG=$LC_ALL
-export EDITOR='vi'    # For shell things I prefer vi/vim.
+export EDITOR='vi' # For shell things I prefer vi/vim.
 export PAGER='less'
 export ZSHCACHEDIR=$HOME/.zsh-cache
 export ZSHCONF=$HOME/.zsh-tmeisenh-dotfiles
@@ -103,13 +103,15 @@ source $ZSHCONF/shellfunctions.zsh
 ## Now, allow for system, host, etc customizations
 
 # Load distro specific settings (darwin, freebsd, linux, etc)
-if [[ -s "${ZSHCONF}/$(uname | tr "[:upper:]" "[:lower:]").zsh" ]]; then
-  source "${ZSHCONF}/$(uname | tr "[:upper:]" "[:lower:]").zsh"
+distro_zsh="${ZSHCONF}/$(uname | tr "[:upper:]" "[:lower:]").zsh"
+if [[ -s ${distro_zsh} ]]; then
+  source ${distro_zsh}
 fi
 
 # Load system specific settings (box1, box2, etc)
-if [[ -s "${ZSHCONF}/$(hostname | tr "[:upper:]" "[:lower:]").zsh" ]]; then
-  source "${ZSHCONF}/$(hostname | tr "[:upper:]" "[:lower:]").zsh"
+host_zsh="${ZSHCONF}/"host"-$(hostname | tr "[:upper:]" "[:lower:]").zsh"
+if [[ -s ${host_zsh} ]]; then
+  source ${host_zsh}
 fi
 
 # Load private (not stored in git) settings
