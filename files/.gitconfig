@@ -41,7 +41,7 @@ sub = submodule update --init --recursive
 svn-pull = !git svn fetch && git svn rebase
 svn-push = !git svn dcommit
 uncommit = reset --soft HEAD^
-unstage = reset HEAD --
+unstage = restore --staged
 
 [core]
 excludesfile = ~/.gitignore_global
