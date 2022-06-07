@@ -42,7 +42,6 @@
     "**/.vscode": true
   },
   "editor.autoIndent": "full",
-  "editor.renderIndentGuides": false,
   "workbench.colorCustomizations": {
     "editorBracketMatch.background": "#40404080",
     "editorBracketMatch.border": "#404040A0",
@@ -261,5 +260,6 @@
   "redhat.telemetry.enabled": false,
   "[java]": {
     "editor.defaultFormatter": "redhat.java"
-  }
+  },
+  "editor.guides.indentation": false
 }
