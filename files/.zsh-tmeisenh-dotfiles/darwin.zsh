@@ -12,7 +12,7 @@ bindkey "^[[H" beginning-of-line ## home
 bindkey "^[[F" end-of-line       ## end
 
 # use vim for less, man, and git
-VIM_LESS=$(brew --prefix vim)/share/vim/vim82/macros/less.sh
+VIM_LESS=$(brew --prefix vim)/share/vim/vim90/macros/less.sh
 alias less=${VIM_LESS}
 alias ctags-objc="ctags --languages=objectivec --langmap=objectivec:.h.m"
 
