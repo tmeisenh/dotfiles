@@ -62,3 +62,12 @@ gpg --list-keys
   - Press PN to "commit"
     - solid blue light on the right side of the space bar is on
   - Press Right-Control plus FN to end programming mode.
+
+* launchd/launchctl
+# un/load a job
+launchctl load -F /path/to/something.plist
+launchctl unload  /path/to/something.plist
+
+# run a job
+launchctl start LableName_from_plist_xml
+
