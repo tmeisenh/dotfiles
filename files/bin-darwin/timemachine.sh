@@ -16,15 +16,18 @@ if [ ! -f "$command" ]; then
   exit 1
 fi
 
-echo "$command is installed"
+echo "Starting at `date`"
 $command $LHOME "$rsync_dir/home" -- --exclude-from="$LHOME/.timemachine.exclude.txt" --progress
+$command "$LHOME/Documents" "$rsync_dir/Documents" -- --progress
 ret="$?"
 
 if [ $ret -ne 0 ]; then
   echo "Did you enable Full disk access?"
+  echo "Finished at `date`"
   echo "--------------------------------------------------------------------------------"
   exit $ret
 fi
 
+echo "Finished at `date`"
 echo "--------------------------------------------------------------------------------"
 exit 0
