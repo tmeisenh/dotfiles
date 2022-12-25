@@ -7,9 +7,13 @@ if [ ! -f "$(which brew)" ]; then
   exit 1
 fi
 
+echo "Starting at `date`"
 (
   brew update && brew upgrade
   brew upgrade --cask
   brew doctor
   brew cleanup
 )
+
+echo "Finished at `date`"
+echo "--------------------------------------------------------------------------------"
