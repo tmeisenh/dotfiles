@@ -13,7 +13,7 @@ echo "Starting at `date`"
   brew upgrade --cask
   brew doctor
   brew cleanup
+  brew autoremove
 )
-
 echo "Finished at `date`"
 echo "--------------------------------------------------------------------------------"

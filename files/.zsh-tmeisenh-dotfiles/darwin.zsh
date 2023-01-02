@@ -44,6 +44,9 @@ if [ -d /usr/local/opt/coreutils/libexec/gnuman ]; then
   )
 fi
 
+# Disables homebrew from doing a 'brew update' when you just want to 'brew install' something
+export HOMEBREW_NO_AUTO_UPDATE=1
+
 # Hash common directories
 hash -d log=/var/log
 
@@ -54,11 +57,6 @@ function diskeject() {
   drutil tray eject -drive $1
 }
 
-function upgrade_homebrew() {
-  brew update --verbose
-  brew outdated
-  brew upgrade
-}
 
 function fix_screensaver() {
   local halfHour=1800
@@ -67,6 +65,10 @@ function fix_screensaver() {
 
 function prevent_sleep() {
   sudo pmset -a disablesleep 1
+}
+
+function remove_dstore() {
+  find . -maxdepth 1 -type f -name ".DS_Store" -exec rm -vf {} \;
 }
 
 #********************************************************************
