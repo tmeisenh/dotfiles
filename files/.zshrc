@@ -79,9 +79,6 @@ limit core 0
 limit coredumpsize 0
 limit -s
 
-# Load various envrionment settings
-source $ZSHCONF/environment.zsh
-
 # Load shell options
 source $ZSHCONF/options.zsh
 

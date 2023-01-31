@@ -7,6 +7,30 @@
 # Apple Mac OS X related zsh aliases, functions, and settings.
 #********************************************************************
 
+## setup homebrew
+chip=$(uname -p)
+if [[ $chip -eq "arm" ]]; then
+  export HOMEBREW_HOME="/opt/homebrew"
+else
+  export HOMEBREW_HOME="/usr/local"
+fi
+
+#openssl_bin=/usr/local/opt/openssl/bin # 4/2016 - Homebrew doesn't allow you to link openssl
+path=(
+  $HOMEBREW_HOME/bin
+  $path
+)
+# homebrew manpath additions
+if [ -d $HOMEBREW_HOME/opt/coreutils/libexec/gnuman ]; then
+  manpath=(
+    /usr/local/opt/coreutils/libexec/gnuman
+    $manpath
+  )
+fi
+
+# Disables homebrew from doing a 'brew update' when you just want to 'brew install' something
+export HOMEBREW_NO_AUTO_UPDATE=1
+
 # System  specific environment variables and settings
 bindkey "^[[H" beginning-of-line ## home
 bindkey "^[[F" end-of-line       ## end
@@ -36,17 +60,6 @@ function clean_derived_data() {
   rm -rf ~/Library/Developer/Xcode/DerivedData
 }
 
-# homebrew manpath additions
-if [ -d /usr/local/opt/coreutils/libexec/gnuman ]; then
-  manpath=(
-    /usr/local/opt/coreutils/libexec/gnuman
-    $manpath
-  )
-fi
-
-# Disables homebrew from doing a 'brew update' when you just want to 'brew install' something
-export HOMEBREW_NO_AUTO_UPDATE=1
-
 # Hash common directories
 hash -d log=/var/log
 
@@ -56,7 +69,6 @@ function diskeject() {
   echo -n "unmounting drive $1..."
   drutil tray eject -drive $1
 }
-
 
 function fix_screensaver() {
   local halfHour=1800
@@ -71,16 +83,22 @@ function remove_dstore() {
   find . -maxdepth 1 -type f -name ".DS_Store" -exec rm -vf {} \;
 }
 
-#********************************************************************
-# environment stuff
-#********************************************************************
-
-export JAVA_HOME=$(/usr/libexec/java_home)
-openssl_bin=/usr/local/opt/openssl/bin # 4/2016 - Homebrew doesn't allow you to link openssl
-
+## adds java
+export JAVA_HOME="$HOMEBREW_HOME/opt/openjdk"
 path=(
   $JAVA_HOME/bin
-  $openssl_bin
   $path
 )
-# End
+
+eval "$(rbenv init -)"
+[[ -d $HOME/.nvm ]] || mkdir -p $HOME/.nvm
+
+export NVM_DIR="$HOME/.nvm"
+source $(brew --prefix nvm)/nvm.sh
+
+export GTAGSLABEL=pygments
+export EMACS_USER_DIRECTORY=$HOME/.emacs.d
+
+[[ -d $HOME/.docker ]] && source $HOME/.docker/init-zsh.sh
+
+# end

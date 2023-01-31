@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
 
-export PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin
+chip=$(uname -p)
+if [[ $chip == "arm" ]]; then
+  export HOMEBREW_HOME="/opt/homebrew"
+else
+  export HOMEBREW_HOME="/usr/local"
+fi
+
+export PATH=$HOMEBREW_HOME/bin:$HOMEBREW_HOME/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin
 
 if [ ! -f "$(which brew)" ]; then
   echo "homebrew is not installed"
   exit 1
 fi
 
-echo "Starting at `date`"
+echo "Starting at $(date)"
 (
   brew update && brew upgrade
   brew upgrade --cask
@@ -15,5 +22,5 @@ echo "Starting at `date`"
   brew cleanup
   brew autoremove
 )
-echo "Finished at `date`"
+echo "Finished at $(date)"
 echo "--------------------------------------------------------------------------------"
