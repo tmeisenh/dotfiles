@@ -9,7 +9,7 @@
 
 ## setup homebrew
 chip=$(uname -p)
-if [[ $chip -eq "arm" ]]; then
+if [[ $chip == "arm" ]]; then
   export HOMEBREW_HOME="/opt/homebrew"
 else
   export HOMEBREW_HOME="/usr/local"
@@ -99,6 +99,6 @@ source $(brew --prefix nvm)/nvm.sh
 export GTAGSLABEL=pygments
 export EMACS_USER_DIRECTORY=$HOME/.emacs.d
 
-[[ -d $HOME/.docker ]] && source $HOME/.docker/init-zsh.sh
+[[ -f $HOME/.docker/init-zsh.sh ]] && source $HOME/.docker/init-zsh.sh
 
 # end
