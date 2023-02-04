@@ -133,3 +133,5 @@ if [ "$(id -u)" = "0" ]; then
 fi
 
 # End
+
+source /Users/travis/.docker/init-zsh.sh || true # Added by Docker Desktop

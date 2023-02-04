@@ -15,7 +15,7 @@ brew update
 brew bundle
 
 echo "linking emacs"
-brew linkapps emacs-plus
+#brew linkapps emacs-plus
 
 echo ""
 echo ""
