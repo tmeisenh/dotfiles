@@ -9,7 +9,7 @@
 export PATH=/usr/local/bin:/usr/bin:/bin
 LHOME="/Users/travis"
 command="$LHOME/git/linux-timemachine/timemachine"
-rsync_dir="/Volumes"
+rsync_dir="/Volumes/backups"
 
 if [ ! -f "$command" ]; then
   echo "$command is not installed"
@@ -18,8 +18,8 @@ fi
 
 echo "Starting at `date`"
 #$command "$LHOME" "$rsync_dir/home" -- --exclude-from="$LHOME/.timemachine.exclude.txt" --progress
-$command "$LHOME/Documents" "$rsync_dir/Documents" -- --progress
-$command "$LHOME/Music" "$rsync_dir/Music" -- --progress
+$command "$LHOME/Documents" "$rsync_dir/Documents" -- --progress --no-perms --no-owner --no-group 
+#$command "$LHOME/Music" "$rsync_dir/Music" -- --progress --no-perms --no-owner --no-group 
 ret="$?"
 
 if [ $ret -ne 0 ]; then
