@@ -65,7 +65,7 @@
   "extensions.ignoreRecommendations": false,
   "editor.parameterHints.enabled": false,
   "editor.cursorBlinking": "phase",
-  "editor.cursorSmoothCaretAnimation": true,
+  "editor.cursorSmoothCaretAnimation": "on",
   "terminal.integrated.scrollback": 10000,
   "javascript.updateImportsOnFileMove.enabled": "always",
   "references.preferredLocation": "view",
