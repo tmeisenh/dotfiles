@@ -1,12 +1,6 @@
 #!/usr/bin/env bash
 
-chip=$(uname -p)
-if [[ $chip == "arm" ]]; then
-  export HOMEBREW_HOME="/opt/homebrew"
-else
-  export HOMEBREW_HOME="/usr/local"
-fi
-
+source ~/bin-darwin/get_homebrew_path.sh
 export PATH=$HOMEBREW_HOME/bin:$HOMEBREW_HOME/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin
 
 if [ ! -f "$(which brew)" ]; then

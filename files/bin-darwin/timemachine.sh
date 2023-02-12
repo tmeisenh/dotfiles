@@ -5,6 +5,7 @@
 # then drag bash into the list of allowed applications
 # uses https://github.com/tmeisenh/linux-timemachine (my fork)
 # To have the script run automatically by launchd, install in ~/Library/LaunchAgents
+# the linux-timemachine script does not like the NAS filesystem over samba, so we must run this over ssh.
 
 ###
 # NOTE: When doing `du -csh` on non-nas the output is incorrect.  The command run ssh'd into the nas reports the correct size.
