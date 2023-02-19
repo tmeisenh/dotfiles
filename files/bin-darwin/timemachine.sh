@@ -23,6 +23,19 @@ if [ ! -f "${command}" ]; then
 fi
 
 echo "Starting at $(date)"
+
+## test if ssh is working properly, synology likes to jack around with /etc/passwd
+ssh nasreader echo "testing ssh connectivity"
+ret="$?"
+if [ $ret -ne 0 ]; then
+  echo "ssh is not working properly for the nasreader!"
+  echo "Finished at $(date)"
+  echo "--------------------------------------------------------------------------------"
+  exit $ret
+fi
+
+
+
 $command "--debug" "${MYHOME}/Documents" "${rsync_loc}/Documents" -- "${rsync_args}"
 #$command "${MYHOME}/Music" "${rsync_loc}/Music" -- "${rsync_args}"
 ret="$?"
