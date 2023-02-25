@@ -148,30 +148,3 @@ function read_CSR() {
 function check_CSR() {
   openssl req -text -noout -verify -in $1
 }
-
-function home_status() {
-  (
-    cd ~/git/dotfiles
-    git st
-  )
-}
-
-# k8s
-alias ks="kubectl exec --tty -it --namespace"
-alias kp="kubectl get pod --namespace"
-alias klf="kubectl logs --follow --namespace"
-
-function klogs() {
-  kubectl logs --follow --namespace $1 $2
-}
-
-# function kexec() {
-#   kubectl exec -it --namespace $1 $2 -- /bin/sh
-# }
-
-function kexec() {
-  local env=$1
-  local pod=$2
-  local first_pod=$(kubectl get pod --namespace $env | /usr/bin/grep $pod | head -n 1 | cut -d " " -f1)
-  kubectl exec -it --namespace $env $first_pod -- /bin/sh
-}
