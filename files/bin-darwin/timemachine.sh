@@ -14,7 +14,7 @@
 export PATH=/usr/local/bin:/usr/bin:/bin
 MYHOME="/Users/travis"
 command="${MYHOME}/git/linux-timemachine/timemachine"
-rsync_loc="nasreader:/volume1/backups"
+rsync_loc="nas:/volume1/backups"
 rsync_args="--progress --no-perms --no-owner --no-group"
 
 if [ ! -f "${command}" ]; then
@@ -25,10 +25,10 @@ fi
 echo "Starting at $(date)"
 
 ## test if ssh is working properly, synology likes to jack around with /etc/passwd
-ssh nasreader echo "testing ssh connectivity"
+ssh nas echo "testing ssh connectivity"
 ret="$?"
 if [ $ret -ne 0 ]; then
-  echo "ssh is not working properly for the nasreader!"
+  echo "ssh is not working properly for the nas!"
   echo "Finished at $(date)"
   echo "--------------------------------------------------------------------------------"
   exit $ret
