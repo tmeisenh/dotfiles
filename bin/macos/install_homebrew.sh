@@ -2,8 +2,11 @@
 # Installs homebrew and all my brews
 
 install_brew() {
-  if [ ! -f "$(which brew)" ]; then
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  /usr/bin/which -s brew
+  ret=$?
+  if [ $ret -ne 0 ]; then
+    echo "Homebrew not found, trying to install..."
+    curl --fail --silent --show-error --location https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
   else
     echo "Homebrew found"
   fi
