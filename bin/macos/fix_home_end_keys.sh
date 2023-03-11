@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-if [[ ! -d $HOME/Library/KeyBindings ]]; then
-  mkdir $HOME/Library/KeyBindings
+dir=$HOME/Library/KeyBindings
+if [[ ! -d $dir ]]; then
+  mkdir dir
 fi
 
-if [[ ! -e DefaultKeyBinding.dict ]]; then
+if [[ ! -e $dir/DefaultKeyBinding.dict ]]; then
   echo "{
   /* Remap Home / End keys to be correct */
   \"\UF729\" = \"moveToBeginningOfLine:\"; /* Home */
@@ -15,7 +16,9 @@ if [[ ! -e DefaultKeyBinding.dict ]]; then
   \"^\UF72B\" = \"moveToEndOfDocument:\"; /* Ctrl + End */
   \"$^\UF729\" = \"moveToBeginningOfDocumentAndModifySelection:\"; /* Shift + Ctrl + Home */
   \"$^\UF72B\" = \"moveToEndOfDocumentAndModifySelection:\"; /* Shift + Ctrl + End */
-}" >$HOME/Library/KeyBindings/DefaultKeyBinding.dict
+}" >$dir/DefaultKeyBinding.dict
 fi
+
 echo "You must reboot for the changes to take."
-echo "You may need to manually set home/end keybindings in osx Terminal home: slash033[H and end: slash033[F"
+echo "You will need to manually configure home/end keybindings in osx Terminal: home <ctrl>a and end: <ctrl>e"
+echo "This works out to \001 and \005 for their values."
