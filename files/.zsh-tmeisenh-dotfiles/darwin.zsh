@@ -88,7 +88,7 @@ function launchd_mylist() {
 }
 
 ## adds java
-export JAVA_HOME="$HOMEBREW_HOME/opt/openjdk"
+export JAVA_HOME="$HOMEBREW_HOME/opt/openjdk@17"
 path=(
   $JAVA_HOME/bin
   $path

@@ -149,6 +149,7 @@
     "estypes",
     "Formik",
     "homescreen",
+    "indexoutofbounds",
     "innerhtml",
     "keyfield",
     "nestjs",
