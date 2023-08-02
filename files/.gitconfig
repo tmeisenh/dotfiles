@@ -23,6 +23,7 @@ br = branch
 ci = commit --verbose
 cia = commit --amend --no-edit
 co = checkout
+deletebr = !sh -c 'git push origin :$1 && git branch -D $1' -
 dc = diff --cached
 di = diff
 last = show -1
