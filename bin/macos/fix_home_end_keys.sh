@@ -2,7 +2,7 @@
 
 dir=$HOME/Library/KeyBindings
 if [[ ! -d $dir ]]; then
-  mkdir dir
+  mkdir $dir
 fi
 
 if [[ ! -e $dir/DefaultKeyBinding.dict ]]; then
