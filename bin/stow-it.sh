@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# ARM homebrew path
+PATH=/opt/homebrew/bin:$PATH
+
 set -e
 
 target=$HOME
@@ -46,7 +49,7 @@ done
 
 stow_check() {
   if [ ! -f "$(which stow)" ]; then
-    echo 'Please install stow.'
+    echo 'Please install stow OR ensure it is in $PATH.'
     echo '  See http://www.gnu.org/software/stow/'
     echo ''
     echo '  To install:'

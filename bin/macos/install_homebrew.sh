@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Installs homebrew and all my brews
 
+# ARM homebrew path
+PATH=/opt/homebrew/bin:$PATH
+
 install_brew() {
   /usr/bin/which -s brew
   ret=$?
