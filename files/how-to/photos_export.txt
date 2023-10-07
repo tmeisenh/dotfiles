@@ -1,0 +1,6 @@
+export using https://github.com/RhetTbull/osxphotos
+osxphotos export /some/destination --exiftool --directory "{folder_album}" --db ~/some/source/photos.library
+
+then something like this to clean up the file creation timestamp in case iCloud fucked with it
+find .  -type d -name -exec exiftool "-FileModifyDate<DateTimeOriginal" {} \;
+
