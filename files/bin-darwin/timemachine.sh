@@ -1,5 +1,8 @@
 #!/bin/bash
 #
+# This script performs an incremental backup of critical data on a periodic basis.
+# It is best used with a process that does a full snapshot backup on a periodic basis.
+#
 # Need to add /bin/bash to System Preferences > Security & Privacy > Privacy > Full Disk Access
 # $ open /bin
 # then drag bash into the list of allowed applications

@@ -167,7 +167,7 @@
   ],
   "typescript.tsserver.log": "off",
   "typescript.tsserver.maxTsServerMemory": 4092,
-  "workbench.colorTheme": "Gruvbox Dark (Hard)",
+  "workbench.colorTheme": "Material Theme Darker",
   "editor.codeLens": true,
   "prettier.singleQuote": true,
   "workbench.startupEditor": "none",
