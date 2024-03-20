@@ -88,7 +88,7 @@ function launchd_mylist() {
 }
 
 ## adds java
-export JAVA_HOME="$HOMEBREW_HOME/opt/openjdk@17"
+export JAVA_HOME="$HOMEBREW_HOME/opt/openjdk@21"
 export PIP_BIN="$HOME/Library/Python/3.11/bin"
 path=(
   $JAVA_HOME/bin
