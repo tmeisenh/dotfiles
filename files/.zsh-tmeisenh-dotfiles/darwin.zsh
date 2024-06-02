@@ -36,7 +36,7 @@ bindkey "^[[H" beginning-of-line ## home
 bindkey "^[[F" end-of-line       ## end
 
 # use vim for less, man, and git
-VIM_LESS=$(brew --prefix vim)/share/vim/vim90/macros/less.sh
+VIM_LESS=$(brew --prefix vim)/share/vim/vim91/macros/less.sh
 alias less=${VIM_LESS}
 
 export MANPAGER="col -b | ${VIM_LESS} -c 'set ft=man nomod nolist nofoldenable' -"
