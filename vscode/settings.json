@@ -261,5 +261,9 @@
   "[java]": {
     "editor.defaultFormatter": "redhat.java"
   },
-  "editor.guides.indentation": false
+  "editor.guides.indentation": false,
+  "[dotenv]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "explorer.confirmDragAndDrop": false
 }
