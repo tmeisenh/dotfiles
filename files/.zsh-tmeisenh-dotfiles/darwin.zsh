@@ -70,9 +70,14 @@ function diskeject() {
   drutil tray eject -drive $1
 }
 
-function fix_screensaver() {
+function fix_screensaver_old() {
   local halfHour=1800
   defaults -currentHost write com.apple.screensaver idleTime ${halfHour}
+}
+
+function fix_screensaver() {
+  # sets it to 3 hours
+  osascript -e 'tell application "System Events" to set delay interval of screen saver preferences to 10800 -- Number In Seconds'
 }
 
 function prevent_sleep() {
