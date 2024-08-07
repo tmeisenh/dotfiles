@@ -1,8 +1,8 @@
 #!/bin/bash
 CONFIG_FILE="$HOME/.duckdns"
 
+date
 if [[ -f $CONFIG_FILE ]]; then
   . $CONFIG_FILE
-  echo url="https://www.duckdns.org/update?domains=$DOMAIN&token=$TOKEN&ip=" |
-    curl -k -K -
+  curl --no-progress-meter --insecure "https://www.duckdns.org/update?domains=$DOMAIN&token=$TOKEN&ip="
 fi

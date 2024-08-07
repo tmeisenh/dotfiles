@@ -8,32 +8,24 @@
 		<key>RunAtLoad</key>
 		<true />
 
-		<key>UserName</key>
+		<key> UserName</key>
 		<string>travis</string>
 
 		<key>Program</key>
-		<string>/Users/travis/bin-darwin/duckdns.sh</string>
+		<string> /Users/travis/bin-darwin/duckdns.sh</string>
 
 		<key>StandardErrorPath</key>
-		<string>/Users/travis/log/duckdns/err.log</string>
+		<string> /Users/travis/log/duckdns/err.log</string>
 
 		<key>StandardOutPath</key>
-		<string>/Users/travis/log/duckdns/std.log</string>
+		<string> /Users/travis/log/duckdns/std.log</string>
 
 		<key>UserName</key>
 		<string>travis</string>
 
-		<key>WorkingDirectory</key>
+		<key> WorkingDirectory</key>
 		<string>/Users/travis</string>
-
-		<key>StartCalendarInterval</key>
-		<dict>
-			<key>Weekday</key>
-			<integer>0</integer>
-			<key>Hour</key>
-			<integer>00</integer>
-			<key>Minute</key>
-			<integer>03</integer>
-		</dict>
+		<key>StartInterval</key>
+		<integer> 300</integer>
 	</dict>
 </plist>
