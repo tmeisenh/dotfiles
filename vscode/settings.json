@@ -1,5 +1,5 @@
 {
-  "explorer.openEditors.visible": 0,
+  "explorer.openEditors.visible": 1,
   "workbench.editor.showIcons": false,
   "workbench.editor.showTabs": "multiple",
   "editor.cursorStyle": "line",
@@ -66,11 +66,9 @@
   "editor.cursorBlinking": "phase",
   "editor.cursorSmoothCaretAnimation": "on",
   "terminal.integrated.scrollback": 10000,
-  "javascript.updateImportsOnFileMove.enabled": "always",
   "references.preferredLocation": "view",
   "editor.gotoLocation.multipleDefinitions": "goto",
   "editor.gotoLocation.multipleImplementations": "goto",
-  "typescript.updateImportsOnFileMove.enabled": "always",
   "typescript.preferences.importModuleSpecifier": "relative",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[json]": {
@@ -240,7 +238,6 @@
   ],
   "json.maxItemsComputed": 5000000,
   "editor.tabSize": 8,
-  "editor.insertSpaces": false,
   "editor.lineNumbers": "on",
   "editor.wordSeparators": "/\\()\"':,.;<>~!@#$%^&*|+=[]{}`?-",
   "editor.wordWrap": "off",
@@ -265,5 +262,14 @@
   "[dotenv]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
-  "explorer.confirmDragAndDrop": false
+  "explorer.confirmDragAndDrop": false,
+  "[sql]": {
+    "editor.defaultFormatter": "mtxr.sqltools"
+  },
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "makefile.configureOnOpen": true,
+  "[ignore]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  }
 }
