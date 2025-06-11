@@ -71,6 +71,9 @@
   "editor.gotoLocation.multipleImplementations": "goto",
   "typescript.preferences.importModuleSpecifier": "relative",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -81,7 +84,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[scss]": {
-    "editor.defaultFormatter": "stylelint.vscode-stylelint"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
@@ -270,6 +273,10 @@
   "typescript.updateImportsOnFileMove.enabled": "always",
   "makefile.configureOnOpen": true,
   "[ignore]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "explorer.confirmPasteNative": false,
+  "[properties]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
   }
 }
