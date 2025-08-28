@@ -6,8 +6,11 @@
 # Works on zsh versions > 4.0.9.
 #********************************************************************
 
+# Source utils file first to get utility functions like source_if_exists
+source "$HOME/.zsh-tmeisenh-dotfiles/utils.zsh"
+
 # Source /etc/profile
-[[ -f /etc/profile ]] && source /etc/profile
+source_if_exists /etc/profile
 
 # Some environment variables and settings
 USER=$(id -un)
@@ -43,10 +46,10 @@ export HISTFILE=$HOME/.zsh_history
 # Load some cool zsh features
 # shellcheck disable=SC2034 # ZSH-specific, used by the shell
 typeset -U path cdpath manpath fpath
-autoload -U zed
-autoload zmv
-autoload zcalc
-autoload zargs
+# autoload -U zed
+# autoload zmv
+# autoload zcalc
+# autoload zargs
 autoload colors && colors
 autoload history-search-end
 autoload zkbd
@@ -92,15 +95,6 @@ limit core 0
 limit coredumpsize 0
 limit -s
 
-# Function to conditionally source a file based on existence
-source_if_exists() {
-  local file="$1"
-  if [[ -f "$file" ]]; then
-    source "$file"
-    return 0
-  fi
-  return 1
-}
 
 # Load shell options
 # shellcheck disable=SC1091 # Can't follow external file
