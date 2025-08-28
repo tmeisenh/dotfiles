@@ -95,7 +95,6 @@ limit core 0
 limit coredumpsize 0
 limit -s
 
-
 # Load shell options
 # shellcheck disable=SC1091 # Can't follow external file
 source_if_exists "$ZSHCONF"/options.zsh
