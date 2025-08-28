@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  lint-shell:
+    name: Lint Shell Scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up shell
+        uses: actions/setup-go@v3
+
+      - name: Install ShellCheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: Run ShellCheck
+        run: |
+          find . -type f -name '*.sh' -o -name '*.zsh' | xargs shellcheck -x
+
+      - name: Check ZSH syntax
+        run: |
+          find . -type f -name '*.zsh' | while read -r file; do
+            echo "Checking $file"
+            zsh -n "$file" || exit 1
+          done
+
+  check-symlinks:
+    name: Check for Broken Symlinks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Find broken symlinks
+        run: |
+          find . -type l -exec test ! -e {} \; -print
+        continue-on-error: true
+
+  test-stow:
+    name: Test Stow
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install stow
+        run: brew install stow
+      - name: Test stow dry run
+        run: |
+          cd files
+          stow --simulate --target=/tmp/test-stow .
