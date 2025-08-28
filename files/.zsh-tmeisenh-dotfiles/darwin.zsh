@@ -16,8 +16,10 @@ else
 fi
 
 #openssl_bin=/usr/local/opt/openssl/bin # 4/2016 - Homebrew doesn't allow you to link openssl
+
 path=(
   $HOMEBREW_HOME/bin
+  ~/.codeium/windsurf/bin
   $path
 )
 # homebrew manpath additions
