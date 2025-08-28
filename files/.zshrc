@@ -92,56 +92,60 @@ limit core 0
 limit coredumpsize 0
 limit -s
 
+# Function to conditionally source a file based on existence
+source_if_exists() {
+  local file="$1"
+  if [[ -f "$file" ]]; then
+    source "$file"
+    return 0
+  fi
+  return 1
+}
+
 # Load shell options
 # shellcheck disable=SC1091 # Can't follow external file
-source "$ZSHCONF"/options.zsh
+source_if_exists "$ZSHCONF"/options.zsh
 
 # Load command completions
 # shellcheck disable=SC1091 # Can't follow external file
-source "$ZSHCONF"/completions.zsh
+source_if_exists "$ZSHCONF"/completions.zsh
 
 # Configure keys working (never works by default)
 # shellcheck disable=SC1091 # Can't follow external file
-source "$ZSHCONF"/keys.zsh
+source_if_exists "$ZSHCONF"/keys.zsh
 
 # Configure prompt
 # shellcheck disable=SC1091 # Can't follow external file
-source "$ZSHCONF"/prompt.zsh
+source_if_exists "$ZSHCONF"/prompt.zsh
 
 # Load system wide aliases
 # shellcheck disable=SC1091 # Can't follow external file
-source "$ZSHCONF"/aliases.zsh
+source_if_exists "$ZSHCONF"/aliases.zsh
 
 # Load common shellfunctions
 # shellcheck disable=SC1091 # Can't follow external file
-source "$ZSHCONF"/shellfunctions.zsh
+source_if_exists "$ZSHCONF"/shellfunctions.zsh
 
 ## Now, allow for system, host, etc customizations
 
 # Load distro specific settings (darwin, freebsd, linux, etc)
 distro_zsh="${ZSHCONF}/$(uname | tr "[:upper:]" "[:lower:]").zsh"
-if [[ -s ${distro_zsh} ]]; then
-  # shellcheck disable=SC1090 # Can't follow non-constant source
-  source "${distro_zsh}"
-fi
+# shellcheck disable=SC1090 # Can't follow non-constant source
+source_if_exists "${distro_zsh}"
 
 # Load system specific settings (box1, box2, etc)
 host_zsh="${ZSHCONF}/host-$(hostname | tr "[:upper:]" "[:lower:]").zsh"
-if [[ -s ${host_zsh} ]]; then
-  # shellcheck disable=SC1090 # Can't follow non-constant source
-  source "${host_zsh}"
-fi
+# shellcheck disable=SC1090 # Can't follow non-constant source
+source_if_exists "${host_zsh}"
 
 # Load private (not stored in git) settings
-[[ -e $ZSHCONF/private.zsh ]] && {
-  # shellcheck disable=SC1091 # Can't follow external file
-  source "$ZSHCONF"/private.zsh
-}
+# shellcheck disable=SC1091 # Can't follow external file
+source_if_exists "$ZSHCONF"/private.zsh
 
 # Load anything specific to a work project
 for f in "$ZSHCONF"/projects/*.zsh; do
   # shellcheck disable=SC1090 # Can't follow non-constant source
-  source "$f"
+  source_if_exists "$f"
 done
 
 # Umask settings
