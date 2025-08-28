@@ -108,13 +108,11 @@ eval "$(rbenv init -)"
 [[ -d "$HOME/.nvm" ]] || mkdir -p "$HOME/.nvm"
 
 export NVM_DIR="$HOME/.nvm"
-# shellcheck disable=SC1090
 source_if_exists "$(brew --prefix nvm)/nvm.sh"
 
 export GTAGSLABEL=pygments
 export EMACS_USER_DIRECTORY=$HOME/.emacs.d
 
-# shellcheck disable=SC1090
 source_if_exists "$HOME/.docker/init-zsh.sh"
 
 # end
