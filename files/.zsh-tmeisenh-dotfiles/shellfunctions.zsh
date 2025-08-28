@@ -8,50 +8,50 @@
 # Usage: pskill <application/program name>
 # Description: kills a process
 function pskill() {
-  pkill -f $1
+  pkill -f "$1"
 }
 
 # Usage: killport <port number>
 # Description: kills the process listening on the given port
 function killport() {
-  lsof -t -i :$1 | xargs --no-run-if-empty kill -9
+  lsof -t -i :"$1" | xargs --no-run-if-empty kill -9
 }
 
 # Usage: smartextract <file>
 # Description: extracts archived files
 # This uses the aliases defined above
 function smartextract() {
-  if [ -f $1 ]; then
-    case $1 in
+  if [ -f "$1" ]; then
+    case "$1" in
     *.tar.bz2)
-      bz $1
+      bz "$1"
       ;;
     *.tar.gz)
-      utar $1
+      utar "$1"
       ;;
     *.bz2)
-      bunzip2 $1
+      bunzip2 "$1"
       ;;
     *.gz)
-      gunzip $1
+      gunzip "$1"
       ;;
     *.jar)
-      jar xf $1
+      jar xf "$1"
       ;;
     *.tar)
-      utar $1
+      utar "$1"
       ;;
     *.tbz2)
-      bz $1
+      bz "$1"
       ;;
     *.tgz)
-      utar $1
+      utar "$1"
       ;;
     *.zip)
-      unzip $1
+      unzip "$1"
       ;;
     *.Z)
-      uncompress $1
+      uncompress "$1"
       ;;
     *)
       echo "'$1' cannot be extracted via smartextract()."
@@ -65,22 +65,22 @@ function smartextract() {
 # Usage: show-archive <archive>
 # Description: view archive without unpack
 function showarchive() {
-  if [[ -f $1 ]]; then
-    case $1 in
+  if [[ -f "$1" ]]; then
+    case "$1" in
     *.tar.gz)
-      gunzip -c $1 | tar -tf - --
+      gunzip -c "$1" | tar -tf - --
       ;;
     *.tar)
-      tar -tf $1
+      tar -tf "$1"
       ;;
     *.tgz)
-      tar -ztf $1
+      tar -ztf "$1"
       ;;
     *.zip)
-      unzip -l $1
+      unzip -l "$1"
       ;;
     *.bz2)
-      bzless $1
+      bzless "$1"
       ;;
     *)
       echo "'$1' cannot be shown via showarchive"
@@ -106,7 +106,7 @@ function ssh-automate-login() {
   fi
 
   echo "Copying public key to remote host."
-  ssh $1 "([ -d ~/.ssh ]||mkdir -m 700 ~/.ssh) && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys" <~/.ssh/id_rsa.pub
+  ssh "$1" "([ -d ~/.ssh ]||mkdir -m 700 ~/.ssh) && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys" <~/.ssh/id_rsa.pub
 
   echo "Done!"
 }
@@ -116,7 +116,7 @@ function unix_timestamp_to_date() {
 }
 
 function delete_dsstore() {
-  find $1 -name ".DS_Store" -depth -exec rm {} \;
+  find "$1" -name ".DS_Store" -depth -exec rm {} \;
 }
 
 function import_gpg_keys_from_usb() {
@@ -125,11 +125,11 @@ function import_gpg_keys_from_usb() {
 }
 
 function delete_remote_git_tag() {
-  git tag -d ${1} && git push origin :refs/tags/${1}
+  git tag -d "${1}" && git push origin :refs/tags/"${1}"
 }
 
 function strip_spaces_from_files() {
-  find ${1} -type f -exec bash -c 'mv -f "$0" "${0// /_}"' {} \;
+  find "${1}" -type f -exec bash -c 'mv -f "$0" "${0// /_}"' {} \;
 }
 
 function normalize_filename() {
@@ -138,13 +138,13 @@ function normalize_filename() {
 
 # ssl certs
 function read_x509() {
-  openssl x509 -noout -text -in $1
+  openssl x509 -noout -text -in "$1"
 }
 
 function read_CSR() {
-  openssl req -noout -text -in $1
+  openssl req -noout -text -in "$1"
 }
 
 function check_CSR() {
-  openssl req -text -noout -verify -in $1
+  openssl req -text -noout -verify -in "$1"
 }

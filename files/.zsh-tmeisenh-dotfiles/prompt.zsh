@@ -27,7 +27,7 @@ function prompt_tmeisenh_setup() {
   autoload -Uz add-zsh-hook
   autoload -Uz vcs_info
   autoload -U promptinit && promptinit
-  #autoload -U colors && colors # colors must be loaded
+  # colors are already loaded in .zshrc
 
   _tmeisenh_colors=(
     "%B%F{1}" #red

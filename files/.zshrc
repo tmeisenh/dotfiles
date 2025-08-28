@@ -6,8 +6,11 @@
 # Works on zsh versions > 4.0.9.
 #********************************************************************
 
+# Source utils file first to get utility functions like source_if_exists
+source "$HOME/.zsh-tmeisenh-dotfiles/utils.zsh"
+
 # Source /etc/profile
-[[ -f /etc/profile ]] && source /etc/profile
+source_if_exists /etc/profile
 
 # Some environment variables and settings
 USER=$(id -un)
@@ -43,10 +46,10 @@ export HISTFILE=$HOME/.zsh_history
 # Load some cool zsh features
 # shellcheck disable=SC2034 # ZSH-specific, used by the shell
 typeset -U path cdpath manpath fpath
-autoload -U zed
-autoload zmv
-autoload zcalc
-autoload zargs
+# autoload -U zed
+# autoload zmv
+# autoload zcalc
+# autoload zargs
 autoload colors && colors
 autoload history-search-end
 autoload zkbd
@@ -92,56 +95,51 @@ limit core 0
 limit coredumpsize 0
 limit -s
 
+
 # Load shell options
 # shellcheck disable=SC1091 # Can't follow external file
-source "$ZSHCONF"/options.zsh
+source_if_exists "$ZSHCONF"/options.zsh
 
 # Load command completions
 # shellcheck disable=SC1091 # Can't follow external file
-source "$ZSHCONF"/completions.zsh
+source_if_exists "$ZSHCONF"/completions.zsh
 
 # Configure keys working (never works by default)
 # shellcheck disable=SC1091 # Can't follow external file
-source "$ZSHCONF"/keys.zsh
+source_if_exists "$ZSHCONF"/keys.zsh
 
 # Configure prompt
 # shellcheck disable=SC1091 # Can't follow external file
-source "$ZSHCONF"/prompt.zsh
+source_if_exists "$ZSHCONF"/prompt.zsh
 
 # Load system wide aliases
 # shellcheck disable=SC1091 # Can't follow external file
-source "$ZSHCONF"/aliases.zsh
+source_if_exists "$ZSHCONF"/aliases.zsh
 
 # Load common shellfunctions
 # shellcheck disable=SC1091 # Can't follow external file
-source "$ZSHCONF"/shellfunctions.zsh
+source_if_exists "$ZSHCONF"/shellfunctions.zsh
 
 ## Now, allow for system, host, etc customizations
 
 # Load distro specific settings (darwin, freebsd, linux, etc)
 distro_zsh="${ZSHCONF}/$(uname | tr "[:upper:]" "[:lower:]").zsh"
-if [[ -s ${distro_zsh} ]]; then
-  # shellcheck disable=SC1090 # Can't follow non-constant source
-  source "${distro_zsh}"
-fi
+# shellcheck disable=SC1090 # Can't follow non-constant source
+source_if_exists "${distro_zsh}"
 
 # Load system specific settings (box1, box2, etc)
 host_zsh="${ZSHCONF}/host-$(hostname | tr "[:upper:]" "[:lower:]").zsh"
-if [[ -s ${host_zsh} ]]; then
-  # shellcheck disable=SC1090 # Can't follow non-constant source
-  source "${host_zsh}"
-fi
+# shellcheck disable=SC1090 # Can't follow non-constant source
+source_if_exists "${host_zsh}"
 
 # Load private (not stored in git) settings
-[[ -e $ZSHCONF/private.zsh ]] && {
-  # shellcheck disable=SC1091 # Can't follow external file
-  source "$ZSHCONF"/private.zsh
-}
+# shellcheck disable=SC1091 # Can't follow external file
+source_if_exists "$ZSHCONF"/private.zsh
 
 # Load anything specific to a work project
 for f in "$ZSHCONF"/projects/*.zsh; do
   # shellcheck disable=SC1090 # Can't follow non-constant source
-  source "$f"
+  source_if_exists "$f"
 done
 
 # Umask settings

@@ -107,11 +107,11 @@ eval "$(rbenv init -)"
 [[ -d $HOME/.nvm ]] || mkdir -p $HOME/.nvm
 
 export NVM_DIR="$HOME/.nvm"
-source $(brew --prefix nvm)/nvm.sh
+source_if_exists "$(brew --prefix nvm)/nvm.sh"
 
 export GTAGSLABEL=pygments
 export EMACS_USER_DIRECTORY=$HOME/.emacs.d
 
-[[ -f $HOME/.docker/init-zsh.sh ]] && source $HOME/.docker/init-zsh.sh
+source_if_exists "$HOME/.docker/init-zsh.sh"
 
 # end
