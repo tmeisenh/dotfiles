@@ -1,0 +1,48 @@
+#!/bin/bash
+
+
+export RESET_COLOR="\033[0m"
+export RED="\033[31m"
+export BRIGHT_RED="\033[91m"
+export BLUE="\033[34m"
+export BRIGHT_BLUE="\033[94m"
+export CYAN="\033[36m"
+export BRIGHT_CYAN="\033[96m"
+
+git remote prune origin
+
+SPECIAL_BRANCHES="${GIT_TIDY_SPECIAL_BRANCHES:-"main|master|release|dev|dev-2025-03-20|qa|demo"}"
+
+local_branches=$(   git branch --format='%(refname:short)' --merged  \
+                  | grep --invert-match \
+                         --extended-regexp "(${SPECIAL_BRANCHES})$" \
+                )
+
+if [[ -z "${local_branches}" ]]; then
+    echo "Nothing to cleanup"
+    exit 0
+fi
+
+lb=$( echo $local_branches | tr ' ' '\n' | sed 's/^/     /g')
+
+echo
+echo "Found the following branches that are merged into your current branch."
+
+if [ -n "${local_branches}" ]; then
+  echo
+  echo -e "${CYAN}  local:"
+  echo -e "${BRIGHT_CYAN}$lb"
+fi
+
+
+echo
+echo -e -n "${RESET_COLOR}Delete these branches? [${BRIGHT_RED}Y${RESET_COLOR}]n "
+read -r yn
+
+case $yn in
+    "" ) ;;
+    [Yy] ) ;;
+    * ) echo -e "\nDoing nothing...have a good day\n"; exit 0;;
+esac
+
+[ -n "${local_branches}" ] && git branch --delete ${lb}

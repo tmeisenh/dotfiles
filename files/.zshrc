@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # Z shell configuration file
 #
 # Author: Travis Meisenheimer <travis@indexoutofbounds.com>
@@ -9,8 +10,10 @@
 [[ -f /etc/profile ]] && source /etc/profile
 
 # Some environment variables and settings
-export USER=$(id -un)
-export HOSTNAME=$(hostname)
+USER=$(id -un)
+export USER
+HOSTNAME=$(hostname)
+export HOSTNAME
 export LC_ALL=en_US.utf-8
 export LANG=$LC_ALL
 export EDITOR='vi' # For shell things I prefer vi/vim.
@@ -28,6 +31,7 @@ bindkey -v #vi key bindings
 #fi
 
 # Set Logs and History
+# shellcheck disable=SC2034 # ZSH-specific, used by the shell
 watch=(notme root)
 
 # Create $user history files
@@ -37,6 +41,7 @@ export DIRSTACKSIZE=16
 export HISTFILE=$HOME/.zsh_history
 
 # Load some cool zsh features
+# shellcheck disable=SC2034 # ZSH-specific, used by the shell
 typeset -U path cdpath manpath fpath
 autoload -U zed
 autoload zmv
@@ -51,6 +56,7 @@ autoload -U predict-on &&
   zle -N predict-off
 
 # set common paths
+# shellcheck disable=SC2206 # ZSH-specific array handling
 path=(
   /usr/local/{bin,sbin}
   /usr/{bin,sbin}
@@ -59,17 +65,24 @@ path=(
 )
 
 # set common man paths
+# shellcheck disable=SC2206 # ZSH-specific array handling
 manpath=(
   /usr/local/share/man
   /usr/share/man
   $manpath
 )
 
+# shellcheck disable=SC2206,SC2128 # ZSH-specific array handling
 [[ -d $HOME/bin ]] && path=($HOME/bin $path)
+# shellcheck disable=SC2206,SC2128,SC2207 # ZSH-specific array handling
 [[ -d $HOME/bin-$(uname | tr "[:upper:]" "[:lower:]") ]] && path=($HOME/bin-$(uname | tr "[:upper:]" "[:lower:]") $path)
 
 # Load custom LS_COLORS
-[[ -e $ZSHCONF/ls_colors.sh ]] && source $ZSHCONF/ls_colors.sh
+[[ -e $ZSHCONF/ls_colors.sh ]] && {
+  # shellcheck disable=SC1091 # Can't follow external file
+  source "$ZSHCONF"/ls_colors.sh
+}
+# shellcheck disable=SC2153 # LS_COLORS is set in ls_colors.sh
 export ZLS_COLORS=$LS_COLORS
 
 # Use hard limits, except for a smaller stack and no core dumps
@@ -80,42 +93,56 @@ limit coredumpsize 0
 limit -s
 
 # Load shell options
-source $ZSHCONF/options.zsh
+# shellcheck disable=SC1091 # Can't follow external file
+source "$ZSHCONF"/options.zsh
 
 # Load command completions
-source $ZSHCONF/completions.zsh
+# shellcheck disable=SC1091 # Can't follow external file
+source "$ZSHCONF"/completions.zsh
 
 # Configure keys working (never works by default)
-source $ZSHCONF/keys.zsh
+# shellcheck disable=SC1091 # Can't follow external file
+source "$ZSHCONF"/keys.zsh
 
 # Configure prompt
-source $ZSHCONF/prompt.zsh
+# shellcheck disable=SC1091 # Can't follow external file
+source "$ZSHCONF"/prompt.zsh
 
 # Load system wide aliases
-source $ZSHCONF/aliases.zsh
+# shellcheck disable=SC1091 # Can't follow external file
+source "$ZSHCONF"/aliases.zsh
 
 # Load common shellfunctions
-source $ZSHCONF/shellfunctions.zsh
+# shellcheck disable=SC1091 # Can't follow external file
+source "$ZSHCONF"/shellfunctions.zsh
 
 ## Now, allow for system, host, etc customizations
 
 # Load distro specific settings (darwin, freebsd, linux, etc)
 distro_zsh="${ZSHCONF}/$(uname | tr "[:upper:]" "[:lower:]").zsh"
 if [[ -s ${distro_zsh} ]]; then
-  source ${distro_zsh}
+  # shellcheck disable=SC1090 # Can't follow non-constant source
+  source "${distro_zsh}"
 fi
 
 # Load system specific settings (box1, box2, etc)
-host_zsh="${ZSHCONF}/"host"-$(hostname | tr "[:upper:]" "[:lower:]").zsh"
+host_zsh="${ZSHCONF}/host-$(hostname | tr "[:upper:]" "[:lower:]").zsh"
 if [[ -s ${host_zsh} ]]; then
-  source ${host_zsh}
+  # shellcheck disable=SC1090 # Can't follow non-constant source
+  source "${host_zsh}"
 fi
 
 # Load private (not stored in git) settings
-[[ -e $ZSHCONF/private.zsh ]] && source $ZSHCONF/private.zsh
+[[ -e $ZSHCONF/private.zsh ]] && {
+  # shellcheck disable=SC1091 # Can't follow external file
+  source "$ZSHCONF"/private.zsh
+}
 
 # Load anything specific to a work project
-for f in $ZSHCONF/projects/*.zsh; do source $f; done
+for f in "$ZSHCONF"/projects/*.zsh; do
+  # shellcheck disable=SC1090 # Can't follow non-constant source
+  source "$f"
+done
 
 # Umask settings
 # -rw-r--r--

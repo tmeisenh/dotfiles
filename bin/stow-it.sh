@@ -49,7 +49,7 @@ done
 
 stow_check() {
   if [ ! -f "$(which stow)" ]; then
-    echo 'Please install stow OR ensure it is in $PATH.'
+    echo "Please install stow OR ensure it is in $PATH."
     echo '  See http://www.gnu.org/software/stow/'
     echo ''
     echo '  To install:'
@@ -64,8 +64,8 @@ stow_check() {
 }
 
 stow_it() {
-  stow --verbose $pretend $delete --target="$target" $force files || echo "Unable to stow."
-  stow --verbose $pretend $delete --target="${vscode}" $force vscode || echo "Unable to stow vscode."
+  stow --verbose $pretend $delete --target="${target}" "$force" files || echo "Unable to stow."
+  stow --verbose $pretend $delete --target="${vscode}" "$force" vscode || echo "Unable to stow vscode."
 }
 
 stow_check
