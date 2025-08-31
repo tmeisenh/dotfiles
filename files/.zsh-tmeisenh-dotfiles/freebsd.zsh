@@ -1,3 +1,5 @@
+#!/bin/zsh
+# shellcheck shell=zsh
 # Z shell configuration file
 #
 # Author: Travis Meisenheimer <travis@indexoutofbounds.com>
@@ -11,7 +13,7 @@
 
 # color man pages, whoa...
 VIM=/usr/local/share/vim/vim73
-export MANPAGER="col -b | $VIM/macros/less.sh -c 'set ft=man nomod nolist nofoldenable' -"
+export MANPAGER="col -b | ${VIM}/macros/less.sh -c 'set ft=man nomod nolist nofoldenable' -"
 
 # Hash common directories
 hash -d log=/var/log
@@ -41,7 +43,7 @@ function update_src_tree() {
 
 # search_ports <ports name to find>
 function search_ports() {
-  sh -c "cd /usr/ports/; make quicksearch name=${1}"
+  sh -c "cd /usr/ports/; make quicksearch name=\"${1}\""
 }
 
 function find_outofdate_ports() {
@@ -50,7 +52,7 @@ function find_outofdate_ports() {
 
 #TODO test this
 function search_pkgs() {
-  sh -c 'pkg search -g $1'
+  sh -c 'pkg search -g "$1"'
 }
 
 # finds installed packages which do not have a maintainer
@@ -87,13 +89,13 @@ export GRADLE_HOME=/usr/local/share/java/gradle
 export ANDROID_HOME=/home/travis/android-sdk/sdk
 
 path=(
-  $JAVA_HOME/bin
-  $M2_HOME/bin
-  $ANT_HOME/bin
-  $GRADLE_HOME/bin
-  $ANDROID_HOME/platform-tools
-  $ANDROID_HOME/tools
-  $path
+  "$JAVA_HOME/bin"
+  "$M2_HOME/bin"
+  "$ANT_HOME/bin"
+  "$GRADLE_HOME/bin"
+  "$ANDROID_HOME/platform-tools"
+  "$ANDROID_HOME/tools"
+  "${path[@]}"
 )
 
 # FreeBSD uses a javawrapper.sh in /usr/local/bin to execute java type commands.

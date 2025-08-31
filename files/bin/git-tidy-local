@@ -23,7 +23,7 @@ if [[ -z "${local_branches}" ]]; then
     exit 0
 fi
 
-lb=$( echo $local_branches | tr ' ' '\n' | sed 's/^/     /g')
+lb=$( echo "$local_branches" | tr ' ' '\n' | sed 's/^/     /g')
 
 echo
 echo "Found the following branches that are merged into your current branch."
@@ -45,4 +45,4 @@ case $yn in
     * ) echo -e "\nDoing nothing...have a good day\n"; exit 0;;
 esac
 
-[ -n "${local_branches}" ] && git branch --delete ${lb}
+[ -n "${local_branches}" ] && git branch --delete "${lb}"

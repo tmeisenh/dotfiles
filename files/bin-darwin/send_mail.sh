@@ -28,9 +28,9 @@ EOF
 }
 
 # Parse options
-while getopts ":h:help:t:s:m:a:" OPTION; do
+while getopts ":ht:s:m:a:e:l:p:" OPTION; do
     case $OPTION in
-    h | help)
+    h)
         usage
         exit 1
         ;;
@@ -71,7 +71,7 @@ if [[ -z ${ATTACHMENT} ]]; then
     echo "${MESSAGE}" | $mailx -s "${SUBJECT}" "${TO_LIST}"
     _ret=$?
 else
-    (echo "${MESSAGE}" | $uuencode ${ATTACHMENT} $($basename $ATTACHMENT)) | $mailx -s "${SUBJECT}" "${TO_LIST}"
+    (echo "${MESSAGE}" | $uuencode "${ATTACHMENT}" "$($basename "$ATTACHMENT")") | $mailx -s "${SUBJECT}" "${TO_LIST}"
     _ret=$?
 fi
 

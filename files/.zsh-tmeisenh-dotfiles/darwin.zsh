@@ -1,3 +1,4 @@
+#!/bin/zsh
 # Z shell configuration file
 #
 # Author: Travis Meisenheimer <travis@indexoutofbounds.com>
@@ -18,15 +19,15 @@ fi
 #openssl_bin=/usr/local/opt/openssl/bin # 4/2016 - Homebrew doesn't allow you to link openssl
 
 path=(
-  $HOMEBREW_HOME/bin
-  ~/.codeium/windsurf/bin
-  $path
+  "$HOMEBREW_HOME/bin"
+  "$HOME/.codeium/windsurf/bin"
+  "$path[@]"
 )
 # homebrew manpath additions
-if [ -d $HOMEBREW_HOME/opt/coreutils/libexec/gnuman ]; then
+if [ -d "$HOMEBREW_HOME/opt/coreutils/libexec/gnuman" ]; then
   manpath=(
-    /usr/local/opt/coreutils/libexec/gnuman
-    $manpath
+    "/usr/local/opt/coreutils/libexec/gnuman"
+    "$manpath[@]"
   )
 fi
 
@@ -98,20 +99,22 @@ function launchd_mylist() {
 export JAVA_HOME="$HOMEBREW_HOME/opt/openjdk@21"
 export PIP_BIN="$HOME/Library/Python/3.11/bin"
 path=(
-  $JAVA_HOME/bin
-  $PIP_BIN
-  $path
+  "$JAVA_HOME/bin"
+  "$PIP_BIN"
+  "$path[@]"
 )
 
 eval "$(rbenv init -)"
-[[ -d $HOME/.nvm ]] || mkdir -p $HOME/.nvm
+[[ -d "$HOME/.nvm" ]] || mkdir -p "$HOME/.nvm"
 
 export NVM_DIR="$HOME/.nvm"
+# shellcheck disable=SC1090
 source_if_exists "$(brew --prefix nvm)/nvm.sh"
 
 export GTAGSLABEL=pygments
 export EMACS_USER_DIRECTORY=$HOME/.emacs.d
 
+# shellcheck disable=SC1090
 source_if_exists "$HOME/.docker/init-zsh.sh"
 
 # end

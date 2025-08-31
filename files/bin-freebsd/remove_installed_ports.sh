@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/sh
 
 # requires ports-mgmt/portupgrade for pkgdb
 

@@ -1,3 +1,4 @@
+#!/bin/zsh
 # Z shell configuration file
 #
 # Author: Travis Meisenheimer <travis@indexoutofbounds.com>

@@ -1,3 +1,4 @@
+#!/bin/zsh
 # Z shell configuration file
 #
 # Author: Travis Meisenheimer <travis@indexoutofbounds.com>
@@ -19,7 +20,7 @@ bindkey "^[[A" up-line-or-search   ## up arrow for back-history-search
 bindkey "^[[B" down-line-or-search ## down arrow for fwd-history-search
 bindkey " " magic-space            ## do history expansion on space
 
-stty erase $(tput kbs) ## I forget why I have this...
+stty erase "$(tput kbs)" ## I forget why I have this...
 stty erase '^?'
 
 # Binding of the keys for command line editing

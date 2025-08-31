@@ -1,3 +1,4 @@
+#!/bin/zsh
 # Z shell configuration file
 #
 # Author: Travis Meisenheimer <travis@indexoutofbounds.com>
@@ -65,7 +66,7 @@ zstyle ':completion:*' squeeze-slashes 'yes'
 
 # Include non-hidden directories in globbed file completions
 # for certain commands
-zstyle ':completion::complete:*' '\'
+zstyle ':completion::complete:*' tag-order 'globbed-files directories'
 
 # Use menuselection for pid completion
 zstyle ':completion:*:*:kill:*' menu yes select
@@ -98,7 +99,9 @@ zstyle ':completion:*:options' auto-description '%d'
 
 bindkey '^X\t' complete
 
-complete-files () { compadd - * }
+function complete-files() { 
+  compadd - * 
+}
 
 compctl -a {,un}alias             # -a is for alias
 compctl -/ {c,push,pop}d
@@ -131,7 +134,9 @@ compdef _gnu_generic feh df
 compctl -k hostnames ping sftp host ssh
 
 # Talk completion
-function whoson { reply=(`users`); }
+function whoson { 
+  reply=($(users))
+}
 compctl -K whoson talk ytalk
 
 # Filter filename completions based on context

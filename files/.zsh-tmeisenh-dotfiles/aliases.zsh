@@ -1,3 +1,4 @@
+#!/bin/zsh
 # Z shell configuration file for "core" aliases
 #
 # Author: Travis Meisenheimer <travis@indexoutofbounds.com>
@@ -28,11 +29,14 @@ alias utar="tar --verbose --extract --gzip --file"
 alias ltar="tar --verbose --list --gzip --file"
 alias gz=gunzip
 alias se="smartextract"
-alias ds="du -csh $1 "
+alias ds="du -csh"  # Removed positional parameter which doesn't work in aliases
 alias pingg="ping -c 3 www.google.com"
 alias dtsp="date +%F"
 
 alias vi="vim"
 alias svi="sudo vim"
 # bash bulletin man pages!!
-alias help='function _help(){ bash -c "help $1"; };_help'
+# Define help as a function instead of an alias
+function help() {
+  bash -c "help $1"
+}

@@ -1,3 +1,5 @@
+#!/bin/zsh
+# shellcheck shell=zsh
 # Z shell configuration file
 #
 # Author: Travis Meisenheimer <travis@indexoutofbounds.com>

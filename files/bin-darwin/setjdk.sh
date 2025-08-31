@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Apple script
-cd /System/Library/Frameworks/JavaVM.framework/Versions
+cd /System/Library/Frameworks/JavaVM.framework/Versions || exit
 
 CURJDK="$(readlink CurrentJDK)"
-echo Current JDK version: $CURJDK
+echo Current JDK version: "$CURJDK"
 
 if [ "$1" == "" ]; then
     echo Installed versions:
@@ -11,14 +11,14 @@ if [ "$1" == "" ]; then
     exit
 fi
 
-VERFOUND=$(ls | grep $1 | head -n 1)
+VERFOUND=$(ls | grep "$1" | head -n 1)
 
 if [ "$VERFOUND" != "$1" ]; then
-    BASE="$(basename $0)"
-    echo Error: Could not change JDK-- version $1 not installed!
-    echo Run $BASE without arguments to see a list of installed versions.
+    BASE="$(basename "$0")"
+    echo Error: Could not change JDK-- version "$1" not installed!
+    echo Run "$BASE" without arguments to see a list of installed versions.
     exit 127
 fi
 
 echo You must now enter your Mac OS X password to change the JDK.
-sudo ln -fhsv $1 CurrentJDK
+sudo ln -fhsv "$1" CurrentJDK

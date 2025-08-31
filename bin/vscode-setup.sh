@@ -59,9 +59,9 @@ rm -rf ~/.vscode/extensions
 
 echo "Installing new extensions"
 echo Installing extensions
-for e in ${EXTENSION[@]}; do
+for e in "${EXTENSION[@]}"; do
     # loop this way so if there's an error we just continue to the next ;)
-    code --install-extension $e
+    code --install-extension "$e"
 done
 echo "Done installing extensions.  Check that all extensions are enabled (some aren't for whatever reason)."
 echo "If installing for the first time, configure the spacemacs keybindings in vscode 'VSpaceCode: Configure Default Settings and Keybindings'"

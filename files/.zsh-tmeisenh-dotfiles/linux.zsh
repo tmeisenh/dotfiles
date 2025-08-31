@@ -1,3 +1,5 @@
+#!/bin/zsh
+# shellcheck shell=zsh
 # Z shell configuration file
 #
 # Author: Travis Meisenheimer <travis@indexoutofbounds.com>
@@ -47,19 +49,19 @@ function unmount_ext2fs_usbstick() {
 #********************************************************************
 
 export JAVA_HOME=/usr/lib/jvm/java-6-oracle
-export IDEA_JDK=$JAVA_HOME
+export IDEA_JDK="$JAVA_HOME"
 export M3_HOME=/usr/local/apache-maven
 export ANT_HOME=/usr/local/share/java/apache-ant
 export GRADLE_HOME=/usr/local/gradle
 export ANDROID_HOME=~/android-sdk/sdk
 
 path=(
-  $JAVA_HOME/bin
-  $M3_HOME/bin
-  $ANT_HOME/bin
-  $GRADLE_HOME/bin
-  $HOME/.rvm/bin
-  $ANDROID_HOME/platform-tools
-  $ANDROID_HOME/tools
-  $path
+  "$JAVA_HOME/bin"
+  "$M3_HOME/bin"
+  "$ANT_HOME/bin"
+  "$GRADLE_HOME/bin"
+  "$HOME/.rvm/bin"
+  "$ANDROID_HOME/platform-tools"
+  "$ANDROID_HOME/tools"
+  "${path[@]}"
 )
