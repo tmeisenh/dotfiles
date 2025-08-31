@@ -4,3 +4,4 @@ files/.vim/bundle/
 files/.zsh-tmeisenh-dotfiles/private.zsh
 files/.zsh-tmeisenh-dotfiles/projects
 files/.zsh-tmeisenh-dotfiles/host*.zsh
+**/*.zwc
