@@ -23,12 +23,12 @@ case $# in
   disk=$(disktool -l | grep Volumes | grep cddafs | cut -d"," -f1 | cut -d"(" -f2 | tr -d "'")
   volume=$(disktool -l | grep Volumes | grep cddafs | cut -d"," -f4 | cut -d"(" -f2 | cut -d"'" -f2)
   echo "Unmounting disk:'$disk' volume:'$volume'"
-  disktool -u $disk
+  disktool -u "$disk"
   echo "Creating disk image"
   CDRDAO="cdrdao read-cd --device $DEVICE --driver $DRIVER --read-raw --with-cddb --datafile $1.bin $1.toc"
   echo "$CDRDAO"
   if true; then
-    (eval $CDRDAO &&
+    (eval "$CDRDAO" &&
       echo "Created the disk image '$1.bin' and table of contents file '$1.toc'") ||
       echo "FAILED to create the disk image '$1.bin' and table of contents file '$1.toc'"
   fi

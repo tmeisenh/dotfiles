@@ -23,6 +23,6 @@ case $# in
 *)
    CDRDAO="cdrdao write --device $DEVICE --driver $DRIVER  $1"
    echo "$CDRDAO"
-   eval $CDRDAO
+   eval "$CDRDAO"
    ;;
 esac
