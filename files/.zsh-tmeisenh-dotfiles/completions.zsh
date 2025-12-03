@@ -103,35 +103,7 @@ function complete-files() {
   compadd - * 
 }
 
-compctl -a {,un}alias             # -a is for alias
-compctl -/ {c,push,pop}d
-compctl -c exec                   # -c is commands, shell functs, alias
-compctl -c man
-compctl -c {where,which}
-compctl -o {,un}setopt            # -o is names of shell functions
-compctl -E {,un}setenv            # -E is environment variables
-compctl -E printenv
-compctl -b bindkey                # -b is keybinding names
-compctl -j fg
-compctl -j kill                   # -j is job names
-compctl -u chown
-compctl -c which
-compctl -c sudo
-
-# completion for "man" by Gossamer <gossamer@tertius.net.au>
-compctl -f -x 'S[1][2][3][4][5][6][7][8][9]' -k '(1 2 3 4 5 6 7 8 9)' \
-    - 'R[[1-9nlo]|[1-9](|[a-z]),^*]' -K 'match-man' \
-    - 's[-M],c[-1,-M]' -g '*(-/)' \
-          - 's[-P],c[-1,-P]' -c \
-        - 's[-S],s[-1,-S]' -k '( )' \
-    - 's[-]' -k '(a d f h k t M P)' \
-    - 'p[1,-1]' -c + -K 'match-man' \
-    -- man
-
 compdef _gnu_generic feh df
-
-# Tab host completion for programs
-# compctl -k hostnames ping sftp host ssh
 
 # Filter filename completions based on context
 compctl -g '*.(Z|gz|tgz)' + -g '*' zcat gunzip
