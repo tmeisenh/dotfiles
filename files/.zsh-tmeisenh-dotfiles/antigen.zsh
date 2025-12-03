@@ -1,5 +1,4 @@
 #!/bin/zsh
-# shellcheck shell=zsh
 # Z shell antigen configuration file
 #
 # Author: Travis Meisenheimer <travis@indexoutofbounds.com>

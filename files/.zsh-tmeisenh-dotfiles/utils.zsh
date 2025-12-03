@@ -11,7 +11,6 @@
 function source_if_exists() {
   local file="$1"
   if [[ -f "$file" ]]; then
-    # shellcheck disable=SC1090
     source "$file"
     return 0
   fi

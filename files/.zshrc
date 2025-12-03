@@ -1,4 +1,3 @@
-# shellcheck shell=bash
 # Z shell configuration file
 #
 # Author: Travis Meisenheimer <travis@indexoutofbounds.com>
@@ -68,7 +67,6 @@ path=(
 )
 
 # set common man paths
-# shellcheck disable=SC2206 # ZSH-specific array handling
 manpath=(
   /usr/local/share/man
   /usr/share/man

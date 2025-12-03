@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# shellcheck source=~/bin-darwin/get_homebrew_path.sh
 source "$HOME/bin-darwin/get_homebrew_path.sh"
 export PATH=$HOMEBREW_HOME/bin:$HOMEBREW_HOME/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin
 
