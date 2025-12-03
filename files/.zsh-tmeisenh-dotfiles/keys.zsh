@@ -25,11 +25,5 @@ stty erase '^?'
 
 # Binding of the keys for command line editing
 # Just hit control plus key!
-bindkey '^K' kill-region
-bindkey '^A' beginning-of-line
-bindkey '^E' end-of-line
-bindkey '^W' complete-word
-bindkey '^L' clear-screen
+ bindkey '^L' clear-screen
 bindkey '^R' history-incremental-search-backward
-bindkey "^X^Z" predict-on
-bindkey "^Z" predict-off

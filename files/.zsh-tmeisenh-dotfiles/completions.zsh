@@ -131,18 +131,9 @@ compctl -f -x 'S[1][2][3][4][5][6][7][8][9]' -k '(1 2 3 4 5 6 7 8 9)' \
 compdef _gnu_generic feh df
 
 # Tab host completion for programs
-compctl -k hostnames ping sftp host ssh
-
-# Talk completion
-function whoson { 
-  reply=($(users))
-}
-compctl -K whoson talk ytalk
+# compctl -k hostnames ping sftp host ssh
 
 # Filter filename completions based on context
-#function listclass () { reply=(`${(ls *.class)%.class}`); }
-#function listclass () { reply=(${$(ls *.class)%.class}); }
-#compctl -K listclass java
 compctl -g '*.(Z|gz|tgz)' + -g '*' zcat gunzip
 compctl -g '*.(tar.Z|tar.gz|tgz|tar.bz2)' + -g '*' tar smartextract se
 compctl -g '*.(zip|ZIP)' + -g '*' unzip smartextract se
