@@ -18,14 +18,11 @@ fpath=(
 # load compinit!
 autoload -U compinit && compinit
 
-# set command completions
-zle -C complete complete-word complete-files
-
 # Pretty menu!
 zstyle ':completion:*' menu select=1
 
 # Case insensitive matching
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
 # Completion options
 zstyle ':completion:*' completer _complete _prefix _expand _approximate _correct
@@ -36,18 +33,9 @@ zstyle ':completion:predict:*' completer _complete
 zstyle ':completion:::::' completer _complete _correct
 zstyle ':completion:*:processes' command 'ps -au $USER'
 zstyle ':completion:*' verbose yes
-zstyle ':completion:*:descriptions' format '%d completing %d'
-zstyle ':completion:*:options' description 'yes'
-zstyle ':completion:*:options' auto-description '%d'
 zstyle ':completion:*:*:zcompile:*' ignored-patterns '(*~|*.zwc)'
 zstyle ':completion:*:(ssh|scp):*:users' ignored-patterns adm bin daemon halt lp named shutdown sync mysql nobody postfix root quest unknown clamav appowner appserver mailman qtss windowserver xgridagent xgridcontroller guest amavisd eppc jabber securityagent tokend sshd www cyrusimap indexoutofbounds.com
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-
-# Add known hosts to ssh/scp/sftp
-local knownhosts
-knownhosts=( ${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[0-9]*}%%\ *}%%,*} )
-zstyle ':completion:*:(ssh|scp|sftp):*' hosts $knownhosts
-
 
 # Correction
 zstyle ':completion::(^approximate*):*:functions' ignored-patterns '_*'
@@ -97,16 +85,24 @@ zstyle ':completion:*:warnings' format '%d--No matches for: %d'
 zstyle ':completion:*:options' description 'yes'
 zstyle ':completion:*:options' auto-description '%d'
 
-bindkey '^X\t' complete
-
-function complete-files() { 
-  compadd - * 
-}
-
 compdef _gnu_generic feh df
 
-# Filter filename completions based on context
-compctl -g '*.(Z|gz|tgz)' + -g '*' zcat gunzip
-compctl -g '*.(tar.Z|tar.gz|tgz|tar.bz2)' + -g '*' tar smartextract se
-compctl -g '*.(zip|ZIP)' + -g '*' unzip smartextract se
-compctl -g '*(-/) .*(-/)' cd
+# Filter filename completions based on context (modern zstyle approach)
+# For compressed files (zcat, gunzip)
+zstyle ':completion:*:*:zcat:*' file-patterns '*.Z:compressed-files *.gz:compressed-files *.tgz:compressed-files *:all-files'
+zstyle ':completion:*:*:gunzip:*' file-patterns '*.Z:compressed-files *.gz:compressed-files *.tgz:compressed-files *:all-files'
+
+# For tar archives
+zstyle ':completion:*:*:tar:*' file-patterns '*.tar:tar-archives *.tar.Z:tar-archives *.tar.gz:tar-archives *.tgz:tar-archives *.tar.bz2:tar-archives *:all-files'
+zstyle ':completion:*:*:smartextract:*' file-patterns '*.tar:tar-archives *.tar.Z:tar-archives *.tar.gz:tar-archives *.tgz:tar-archives *.tar.bz2:tar-archives *.zip:zip-archives *.ZIP:zip-archives *:all-files'
+zstyle ':completion:*:*:se:*' file-patterns '*.tar:tar-archives *.tar.Z:tar-archives *.tar.gz:tar-archives *.tgz:tar-archives *.tar.bz2:tar-archives *.zip:zip-archives *.ZIP:zip-archives *:all-files'
+
+# For zip files
+zstyle ':completion:*:*:unzip:*' file-patterns '*.zip:zip-archives *.ZIP:zip-archives *:all-files'
+
+# For cd command - only directories
+zstyle ':completion:*:*:cd:*' file-patterns '*(-/):directories' 
+
+# For docker completions
+zstyle ':completion:*:*:docker:*' option-stacking yes
+zstyle ':completion:*:*:docker-*:*' option-stacking yes
