@@ -57,4 +57,7 @@ function prompt_tmeisenh_setup() {
   PROMPT='%(!.${_tmeisenh_colors[1]}.${_tmeisenh_colors[2]}%n@)%m ${_tmeisenh_colors[3]}%@ ${_tmeisenh_colors[4]}${vcs_info_msg_0_}${_tmeisenh_colors[5]}%1d $(prompt_char)${_tmeisenh_colors[6]} '
 }
 
+# Set prompt_subst if not already enabled
+[[ -o prompt_subst ]] || setopt prompt_subst
+
 prompt_tmeisenh_setup "$@"
