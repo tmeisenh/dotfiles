@@ -36,10 +36,9 @@ zstyle ':completion:predict:*' completer _complete
 zstyle ':completion:::::' completer _complete _correct
 zstyle ':completion:*:processes' command 'ps -au $USER'
 zstyle ':completion:*' verbose yes
-zstyle ':completion:*:descriptions' format '%d completing %d'
-zstyle ':completion:*:options' description 'yes'
-zstyle ':completion:*:options' auto-description '%d'
 zstyle ':completion:*:*:zcompile:*' ignored-patterns '(*~|*.zwc)'
+
+# Ignore system users and service accounts when completing usernames for SSH/SCP
 zstyle ':completion:*:(ssh|scp):*:users' ignored-patterns adm bin daemon halt lp named shutdown sync mysql nobody postfix root quest unknown clamav appowner appserver mailman qtss windowserver xgridagent xgridcontroller guest amavisd eppc jabber securityagent tokend sshd www cyrusimap indexoutofbounds.com
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
@@ -54,11 +53,14 @@ zstyle ':completion::(^approximate*):*:functions' ignored-patterns '_*'
 zstyle ':completion:*:correct:*' insert-unambiguous true
 zstyle ':completion:*:correct:*' max-errors 2 numeric
 zstyle ':completion:*:correct:*' original true
+# Format settings for completion messages
 zstyle ':completion:*:corrections' format '%B%d (errors: %e)%b'
+zstyle ':completion:*:descriptions' format "%d"
+zstyle ':completion:*:messages' format '%d'
+zstyle ':completion:*:warnings' format '%d--No matches for: %d'
 
 # Completion caching
-zstyle ':completion:*' use-cache 1
-zstyle ':completion::complete:*' use-cache 1 cache-path $ZSHCACHEDIR
+zstyle ':completion:*' use-cache 1 cache-path $ZSHCACHEDIR
 
 # Expand partial paths
 zstyle ':completion:*' expand 'yes'
@@ -86,12 +88,6 @@ zstyle ':completion:*:matches' group 'yes'
 zstyle ':completion:*:rm:*' ignore-line yes
 zstyle ':completion:*:cp:*' ignore-line yes
 
-# Describe each match group.
-zstyle ':completion:*:descriptions' format "%d"
-
-# Messages/warnings format
-zstyle ':completion:*:messages' format '%d'
-zstyle ':completion:*:warnings' format '%d--No matches for: %d'
 
 # Describe options in full
 zstyle ':completion:*:options' description 'yes'
@@ -103,20 +99,19 @@ function complete-files() {
   compadd - * 
 }
 
-compctl -a {,un}alias             # -a is for alias
-compctl -/ {c,push,pop}d
-compctl -c exec                   # -c is commands, shell functs, alias
-compctl -c man
-compctl -c {where,which}
-compctl -o {,un}setopt            # -o is names of shell functions
-compctl -E {,un}setenv            # -E is environment variables
-compctl -E printenv
-compctl -b bindkey                # -b is keybinding names
-compctl -j fg
-compctl -j kill                   # -j is job names
-compctl -u chown
-compctl -c which
-compctl -c sudo
+# Modern command completions
+compdef _aliases {,un}alias       # Complete with aliases
+compdef _dirs {c,push,pop}d       # Complete with directories
+compdef _command exec             # Complete with commands
+compdef _command {where,which}    # Complete with commands
+compdef _setopt {,un}setopt       # Complete with shell options
+compdef _parameters -g "*export*" {,un}setenv  # Complete with environment variables
+compdef _parameters -g "*export*" printenv     # Complete with environment variables
+compdef _bindkey bindkey          # Complete with keybindings
+compdef _jobs fg                  # Complete with jobs
+compdef _kill kill                # Complete with processes
+compdef _users chown              # Complete with users
+compdef _command sudo             # Complete with commands
 
 # completion for "man" by Gossamer <gossamer@tertius.net.au>
 compctl -f -x 'S[1][2][3][4][5][6][7][8][9]' -k '(1 2 3 4 5 6 7 8 9)' \
@@ -130,20 +125,8 @@ compctl -f -x 'S[1][2][3][4][5][6][7][8][9]' -k '(1 2 3 4 5 6 7 8 9)' \
 
 compdef _gnu_generic feh df
 
-# Tab host completion for programs
-compctl -k hostnames ping sftp host ssh
-
-# Talk completion
-function whoson { 
-  reply=($(users))
-}
-compctl -K whoson talk ytalk
-
 # Filter filename completions based on context
-#function listclass () { reply=(`${(ls *.class)%.class}`); }
-#function listclass () { reply=(${$(ls *.class)%.class}); }
-#compctl -K listclass java
-compctl -g '*.(Z|gz|tgz)' + -g '*' zcat gunzip
-compctl -g '*.(tar.Z|tar.gz|tgz|tar.bz2)' + -g '*' tar smartextract se
-compctl -g '*.(zip|ZIP)' + -g '*' unzip smartextract se
-compctl -g '*(-/) .*(-/)' cd
+compdef '_files -g "*.{Z,gz,tgz}"' zcat gunzip
+compdef '_files -g "*.{tar.Z,tar.gz,tgz,tar.bz2}"' tar smartextract se
+compdef '_files -g "*.{zip,ZIP}"' unzip smartextract se
+compdef _directories cd
