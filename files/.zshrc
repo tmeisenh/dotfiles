@@ -8,6 +8,9 @@
 # Source utils file first to get utility functions like source_if_exists
 source "$HOME/.zsh-tmeisenh-dotfiles/utils.zsh"
 
+# Source antigen for plugin management
+source_if_exists "$HOME/.zsh-tmeisenh-dotfiles/antigen.zsh"
+
 # Source /etc/profile
 source_if_exists /etc/profile
 

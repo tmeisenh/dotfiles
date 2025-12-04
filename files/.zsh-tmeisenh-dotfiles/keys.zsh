@@ -16,8 +16,8 @@ bindkey "^[[6~" down-line-or-history ## PageDown
 bindkey "^[1~" beginning-of-line     ## home
 bindkey "^[4~" end-of-line           ## end
 bindkey "^[e" expand-cmd-path      ## Alt+e to expand command path
-bindkey "^[[A" up-line-or-search   ## up arrow for back-history-search
-bindkey "^[[B" down-line-or-search ## down arrow for fwd-history-search
+# bindkey "^[[A" up-line-or-search   ## up arrow for back-history-search
+# bindkey "^[[B" down-line-or-search ## down arrow for fwd-history-search
 bindkey " " magic-space            ## do history expansion on space
 
 # stty erase "$(tput kbs)" # Uses terminal's defined backspace character from terminfo database
@@ -25,14 +25,8 @@ stty erase '^?'      # Sets backspace to the standard DEL character (ASCII 127)
 
 # Binding of the keys for command line editing
 # Just hit control plus key!
-bindkey '^K' kill-region
-bindkey '^A' beginning-of-line
-bindkey '^E' end-of-line
-bindkey '^W' complete-word
 bindkey '^L' clear-screen
 bindkey '^R' history-incremental-search-backward
-bindkey "^X^Z" predict-on
-bindkey "^Z" predict-off
 
 # Use built-in file completion
 bindkey '^X\t' expand-or-complete-prefix
