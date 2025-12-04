@@ -8,144 +8,200 @@
 
 # Usage: pskill <application/program name>
 # Description: kills a process
-function pskill() {
+pskill() {
   pkill -f "$1"
 }
 
 # Usage: killport <port number>
 # Description: kills the process listening on the given port
-function killport() {
-  lsof -t -i :"$1" | xargs --no-run-if-empty kill -9
+killport() {
+  local pids=$(lsof -t -i :"$1" 2>/dev/null)
+  
+  if [[ -n "$pids" ]]; then
+    echo "Killing processes on port $1: $pids"
+    kill -9 $pids 2>/dev/null
+  else
+    echo "No process found listening on port $1"
+  fi
 }
 
 # Usage: smartextract <file>
 # Description: extracts archived files
 # This uses the aliases defined above
-function smartextract() {
-  if [ -f "$1" ]; then
-    case "$1" in
-    *.tar.bz2)
-      bz "$1"
-      ;;
-    *.tar.gz)
-      utar "$1"
-      ;;
+smartextract() {
+  if [[ ! -f "$1" ]]; then
+    echo "'$1' is not a valid file."
+    return 1
+  fi
+
+  case "${1:l}" in  # Convert to lowercase for case-insensitive matching
+    *.tar.bz2|*.tbz2)
+      bz "$1" ;;
+    *.tar.gz|*.tgz)
+      utar "$1" ;;
     *.bz2)
-      bunzip2 "$1"
-      ;;
+      bunzip2 "$1" ;;
     *.gz)
-      gunzip "$1"
-      ;;
+      gunzip "$1" ;;
     *.jar)
-      jar xf "$1"
-      ;;
+      jar xf "$1" ;;
     *.tar)
-      utar "$1"
-      ;;
-    *.tbz2)
-      bz "$1"
-      ;;
-    *.tgz)
-      utar "$1"
-      ;;
+      utar "$1" ;;
     *.zip)
-      unzip "$1"
-      ;;
+      unzip "$1" ;;
     *.Z)
-      uncompress "$1"
-      ;;
+      uncompress "$1" ;;
+    *.xz)
+      unxz "$1" 2>/dev/null || echo "unxz not found, install xz-utils" ;;
+    *.7z)
+      7z x "$1" 2>/dev/null || echo "7z not found, install p7zip" ;;
     *)
       echo "'$1' cannot be extracted via smartextract()."
-      ;;
-    esac
-  else
-    echo "'$1' is not a valid file."
-  fi
+      return 1 ;;
+  esac
 }
 
 # Usage: show-archive <archive>
 # Description: view archive without unpack
-function showarchive() {
-  if [[ -f "$1" ]]; then
-    case "$1" in
-    *.tar.gz)
-      gunzip -c "$1" | tar -tf - --
-      ;;
+showarchive() {
+  if [[ ! -f "$1" ]]; then
+    echo "'$1' is not a valid archive"
+    return 1
+  fi
+
+  case "${1:l}" in  # Convert to lowercase for case-insensitive matching
+    *.tar.gz|*.tgz)
+      gunzip -c "$1" | tar -tf - -- ;;    
+    *.tar.bz2|*.tbz2)
+      bzcat "$1" | tar -tf - ;;    
     *.tar)
-      tar -tf "$1"
-      ;;
-    *.tgz)
-      tar -ztf "$1"
-      ;;
+      tar -tf "$1" ;;    
     *.zip)
-      unzip -l "$1"
-      ;;
+      unzip -l "$1" ;;    
     *.bz2)
-      bzless "$1"
-      ;;
+      bzless "$1" ;;    
+    *.gz)
+      gzcat "$1" 2>/dev/null || zcat "$1" ;;    
+    *.7z)
+      7z l "$1" 2>/dev/null || echo "7z not found, install p7zip" ;;    
+    *.xz)
+      xzcat "$1" | less 2>/dev/null || echo "xzcat not found, install xz-utils" ;;    
     *)
       echo "'$1' cannot be shown via showarchive"
-      ;;
-    esac
+      return 1 ;;
+  esac
+}
+
+# Setup SSH key-based authentication with a remote host
+# This works if the remote host allows password authentication
+# Usage: ssh-automate-login <user@hostname>
+ssh-automate-login() {
+  local remote_host="$1"
+  local key_path="$HOME/.ssh/id_rsa"
+  
+  if [[ -z "$remote_host" ]]; then
+    echo "Error: No remote host specified"
+    echo "Usage: ssh-automate-login <user@hostname>"
+    return 1
+  fi
+
+  echo "Checking for existing RSA key..."
+  
+  if [[ ! -f "$key_path" ]]; then
+    echo "No RSA key found, generating a 4096 bit RSA key."
+    echo "Hit enter/return for no passphrase (or enter a passphrase for better security)."
+    ssh-keygen -t rsa -b 4096 -f "$key_path"
   else
-    echo "'$1' is not a valid archive"
+    echo "Found existing SSH key at $key_path, using that."
+  fi
+
+  echo "Copying public key to $remote_host..."
+  ssh-copy-id -i "${key_path}.pub" "$remote_host"
+  
+  echo "Done! You should now be able to connect without a password."
+  echo "Try: ssh $remote_host"
+}
+
+unix_timestamp_to_date() {
+  # Use native date command instead of perl for better portability
+  if [[ "$(uname)" == "Darwin" ]]; then
+    # macOS date command
+    date -r "$1"
+  else
+    # Linux date command
+    date -d "@$1"
   fi
 }
 
-# This only works if the remote host allows password authentication
-# If you leave the passphrase blank you won't have to type a password for
-# access into the remote system.
-function ssh-automate-login() {
-  echo "Checking to see if a public key exists."
-
-  if [ ! -f .ssh/id_rsa ]; then
-    echo "None found, generating a 2048 bit rsa key."
-    echo "Hit enter/return for no passphrase."
-    ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa
-  else
-    echo "Found existing ssh-keygen key, using that."
-  fi
-
-  echo "Copying public key to remote host."
-  ssh "$1" "([ -d ~/.ssh ]||mkdir -m 700 ~/.ssh) && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys" <~/.ssh/id_rsa.pub
-
-  echo "Done!"
+delete_dsstore() {
+  local target_dir="${1:-.}"
+  
+  # Use -delete which is more efficient than -exec rm
+  find "$target_dir" -type f -name ".DS_Store" -delete
 }
 
-function unix_timestamp_to_date() {
-  perl -e "require 'ctime.pl'; print &ctime($1);"
+import_gpg_keys_from_usb() {
+  local gpg_path="${1:-/mnt/usb/gnugpg}"
+  
+  # Import public keys
+  find "$gpg_path" -type f -name '*_pub.gpg' -exec gpg --import '{}' \;
+  
+  # Import secret keys
+  find "$gpg_path" -type f -name '*_sec.gpg' -exec gpg --import '{}' \;
 }
 
-function delete_dsstore() {
-  find "$1" -name ".DS_Store" -depth -exec rm {} \;
+delete_remote_git_tag() {
+  local tag_name="$1"
+  local remote="${2:-origin}"
+  
+  # Delete local tag
+  git tag -d "$tag_name" && \
+  # Delete remote tag
+  git push "$remote" ":refs/tags/$tag_name"
 }
 
-function import_gpg_keys_from_usb() {
-  find /mnt/usb/gnugpg -type f -name '*_pub.gpg' -exec gpg --import '{}' \;
-  find /mnt/usb/gnugpg -type f -name '*_sec.gpg' -exec gpg --allow-secret-key-import --import '{}' \;
+strip_spaces_from_files() {
+  local target_dir="${1:-.}"
+  
+  # Use zsh's built-in string manipulation instead of bash -c
+  for file in $(find "$target_dir" -type f -name "* *"); do
+    local new_name="${file// /_}"
+    [[ "$file" != "$new_name" ]] && mv -f "$file" "$new_name"
+  done
 }
 
-function delete_remote_git_tag() {
-  git tag -d "${1}" && git push origin :refs/tags/"${1}"
+normalize_filename() {
+  local file="$1"
+  local new_name="${file// /_}"
+  
+  [[ "$file" != "$new_name" ]] && mv -f "$file" "$new_name"
 }
 
-function strip_spaces_from_files() {
-  find "${1}" -type f -exec bash -c 'mv -f "$0" "${0// /_}"' {} \;
-}
-
-function normalize_filename() {
-  mv -f "$1" "${1// /_}"
-}
-
-# ssl certs
-function read_x509() {
+# SSL certificate utilities
+read_x509() {
   openssl x509 -noout -text -in "$1"
 }
 
-function read_CSR() {
+read_CSR() {
   openssl req -noout -text -in "$1"
 }
 
-function check_CSR() {
+check_CSR() {
   openssl req -text -noout -verify -in "$1"
+}
+
+# Check certificate expiration date
+cert_expiry() {
+  local cert_file="$1"
+  
+  # Show certificate end date
+  openssl x509 -noout -enddate -in "$cert_file"
+  
+  # Calculate days until expiration
+  local expiry_date=$(openssl x509 -noout -enddate -in "$cert_file" | cut -d= -f2)
+  local expiry_epoch=$(date -j -f "%b %d %H:%M:%S %Y %Z" "$expiry_date" +%s 2>/dev/null)
+  local now_epoch=$(date +%s)
+  local days_left=$(( (expiry_epoch - now_epoch) / 86400 ))
+  
+  echo "Days until expiration: $days_left"
 }
