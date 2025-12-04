@@ -22,8 +22,8 @@ fpath=(
 # load compinit!
 autoload -U compinit && compinit
 
-# set command completions
-zle -C complete complete-word complete-files
+# Use built-in completion system
+# No need for custom completion widgets
 
 # ----------------------
 # COMPLETION STYLE SETTINGS
@@ -57,7 +57,7 @@ zstyle ':completion:*:correct:*' max-errors 2 numeric
 zstyle ':completion:*:correct:*' original true
 
 # ----------------------
-# COMPLETION FORMAT SETTINGS
+# COMPLETION FORMAT AND DISPLAY SETTINGS
 # ----------------------
 
 # Format settings for completion messages
@@ -65,6 +65,10 @@ zstyle ':completion:*:corrections' format '%B%d (errors: %e)%b'
 zstyle ':completion:*:descriptions' format "%d"
 zstyle ':completion:*:messages' format '%d'
 zstyle ':completion:*:warnings' format '%d--No matches for: %d'
+
+# Describe options in full
+zstyle ':completion:*:options' description 'yes'
+zstyle ':completion:*:options' auto-description '%d'
 
 # Completion caching
 zstyle ':completion:*' use-cache 1 cache-path $ZSHCACHEDIR
@@ -92,22 +96,8 @@ zstyle ':completion:*:matches' group 'yes'
 
 # With commands like rm, it's annoying if you keep getting offered the same
 # file multiple times. This fixes it. Also good for cp, et cetera..
-zstyle ':completion:*:rm:*' ignore-line yes
-zstyle ':completion:*:cp:*' ignore-line yes
+zstyle ':completion:*:(rm|cp):*' ignore-line yes
 
-# ----------------------
-# COMPLETION DISPLAY SETTINGS
-# ----------------------
-
-# Describe options in full
-zstyle ':completion:*:options' description 'yes'
-zstyle ':completion:*:options' auto-description '%d'
-
-bindkey '^X	' complete
-
-function complete-files() { 
-  compadd - * 
-}
 
 # ----------------------
 # COMMAND-SPECIFIC COMPLETIONS

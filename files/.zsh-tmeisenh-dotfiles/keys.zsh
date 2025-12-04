@@ -33,3 +33,5 @@ bindkey '^L' clear-screen
 bindkey '^R' history-incremental-search-backward
 bindkey "^X^Z" predict-on
 bindkey "^Z" predict-off
+# Use built-in file completion
+bindkey '^X\t' expand-or-complete-prefix
