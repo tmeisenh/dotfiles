@@ -6,6 +6,10 @@
 # Works on zsh versions > 4.0.9.
 #********************************************************************
 
+# ----------------------
+# COMPLETION SYSTEM SETUP
+# ----------------------
+
 # Remove existing comp cache
 #rm -rf $HOME/.zcompdump
 
@@ -20,6 +24,10 @@ autoload -U compinit && compinit
 
 # set command completions
 zle -C complete complete-word complete-files
+
+# ----------------------
+# COMPLETION STYLE SETTINGS
+# ----------------------
 
 # Pretty menu!
 zstyle ':completion:*' menu select=1
@@ -38,14 +46,8 @@ zstyle ':completion:*:processes' command 'ps -au $USER'
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*:*:zcompile:*' ignored-patterns '(*~|*.zwc)'
 
-# Ignore system users and service accounts when completing usernames for SSH/SCP
-zstyle ':completion:*:(ssh|scp):*:users' ignored-patterns adm bin daemon halt lp named shutdown sync mysql nobody postfix root quest unknown clamav appowner appserver mailman qtss windowserver xgridagent xgridcontroller guest amavisd eppc jabber securityagent tokend sshd www cyrusimap indexoutofbounds.com
+# Set list colors for completion
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-
-# Add known hosts to ssh/scp/sftp
-local knownhosts
-knownhosts=( ${${${${(f)"$(<$HOME/.ssh/known_hosts)"}:#[0-9]*}%%\ *}%%,*} )
-zstyle ':completion:*:(ssh|scp|sftp):*' hosts $knownhosts
 
 
 # Correction
@@ -53,6 +55,11 @@ zstyle ':completion::(^approximate*):*:functions' ignored-patterns '_*'
 zstyle ':completion:*:correct:*' insert-unambiguous true
 zstyle ':completion:*:correct:*' max-errors 2 numeric
 zstyle ':completion:*:correct:*' original true
+
+# ----------------------
+# COMPLETION FORMAT SETTINGS
+# ----------------------
+
 # Format settings for completion messages
 zstyle ':completion:*:corrections' format '%B%d (errors: %e)%b'
 zstyle ':completion:*:descriptions' format "%d"
@@ -88,16 +95,23 @@ zstyle ':completion:*:matches' group 'yes'
 zstyle ':completion:*:rm:*' ignore-line yes
 zstyle ':completion:*:cp:*' ignore-line yes
 
+# ----------------------
+# COMPLETION DISPLAY SETTINGS
+# ----------------------
 
 # Describe options in full
 zstyle ':completion:*:options' description 'yes'
 zstyle ':completion:*:options' auto-description '%d'
 
-bindkey '^X\t' complete
+bindkey '^X	' complete
 
 function complete-files() { 
   compadd - * 
 }
+
+# ----------------------
+# COMMAND-SPECIFIC COMPLETIONS
+# ----------------------
 
 # Modern command completions
 compdef _aliases {,un}alias       # Complete with aliases
