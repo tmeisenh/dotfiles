@@ -33,7 +33,7 @@ autoload -U compinit && compinit
 zstyle ':completion:*' menu select=1
 
 # Case insensitive matching
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
 # Completion options
 zstyle ':completion:*' completer _complete _prefix _expand _approximate _correct
@@ -103,27 +103,18 @@ zstyle ':completion:*:(rm|cp):*' ignore-line yes
 # COMMAND-SPECIFIC COMPLETIONS
 # ----------------------
 
-# Modern command completions
-compdef _aliases {,un}alias       # Complete with aliases
-compdef _dirs {c,push,pop}d       # Complete with directories
-compdef _command exec             # Complete with commands
-compdef _command {where,which}    # Complete with commands
-compdef _setopt {,un}setopt       # Complete with shell options
-compdef _parameters -g "*export*" {,un}setenv  # Complete with environment variables
-compdef _parameters -g "*export*" printenv     # Complete with environment variables
-compdef _bindkey bindkey          # Complete with keybindings
-compdef _jobs fg                  # Complete with jobs
-compdef _kill kill                # Complete with processes
-compdef _users chown              # Complete with users
-compdef _command sudo             # Complete with commands
+# Filter filename completions based on context (modern zstyle approach)
+# For compressed files (zcat, gunzip)
+zstyle ':completion:*:*:zcat:*' file-patterns '*.Z:compressed-files *.gz:compressed-files *.tgz:compressed-files *:all-files'
+zstyle ':completion:*:*:gunzip:*' file-patterns '*.Z:compressed-files *.gz:compressed-files *.tgz:compressed-files *:all-files'
 
-# Use the built-in man page completion
-compdef _man man
+# For tar archives
+zstyle ':completion:*:*:tar:*' file-patterns '*.tar:tar-archives *.tar.Z:tar-archives *.tar.gz:tar-archives *.tgz:tar-archives *.tar.bz2:tar-archives *:all-files'
+zstyle ':completion:*:*:smartextract:*' file-patterns '*.tar:tar-archives *.tar.Z:tar-archives *.tar.gz:tar-archives *.tgz:tar-archives *.tar.bz2:tar-archives *.zip:zip-archives *.ZIP:zip-archives *:all-files'
+zstyle ':completion:*:*:se:*' file-patterns '*.tar:tar-archives *.tar.Z:tar-archives *.tar.gz:tar-archives *.tgz:tar-archives *.tar.bz2:tar-archives *.zip:zip-archives *.ZIP:zip-archives *:all-files'
 
-compdef _gnu_generic feh df
+# For zip files
+zstyle ':completion:*:*:unzip:*' file-patterns '*.zip:zip-archives *.ZIP:zip-archives *:all-files'
 
-# Filter filename completions based on context
-compdef '_files -g "*.{Z,gz,tgz}"' zcat gunzip
-compdef '_files -g "*.{tar.Z,tar.gz,tgz,tar.bz2}"' tar smartextract se
-compdef '_files -g "*.{zip,ZIP}"' unzip smartextract se
-compdef _directories cd
+# For cd command - only directories
+zstyle ':completion:*:*:cd:*' file-patterns '*(-/):directories' 
