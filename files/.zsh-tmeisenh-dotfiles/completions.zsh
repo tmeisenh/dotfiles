@@ -113,15 +113,8 @@ compdef _kill kill                # Complete with processes
 compdef _users chown              # Complete with users
 compdef _command sudo             # Complete with commands
 
-# completion for "man" by Gossamer <gossamer@tertius.net.au>
-compctl -f -x 'S[1][2][3][4][5][6][7][8][9]' -k '(1 2 3 4 5 6 7 8 9)' \
-    - 'R[[1-9nlo]|[1-9](|[a-z]),^*]' -K 'match-man' \
-    - 's[-M],c[-1,-M]' -g '*(-/)' \
-          - 's[-P],c[-1,-P]' -c \
-        - 's[-S],s[-1,-S]' -k '( )' \
-    - 's[-]' -k '(a d f h k t M P)' \
-    - 'p[1,-1]' -c + -K 'match-man' \
-    -- man
+# Use the built-in man page completion
+compdef _man man
 
 compdef _gnu_generic feh df
 
