@@ -1,18 +1,10 @@
 #!/bin/zsh
-# Z shell configuration file for the local system.
+# Z shell configuration file for k8s helpers
 #
 # Author: Travis Meisenheimer <travis@indexoutofbounds.com>
 #
+# Note: Source this file manually or from a host/project file when needed
 #********************************************************************
-
-eval "$(rbenv init -)"
-[[ -d "$HOME/.nvm" ]] || mkdir -p "$HOME/.nvm"
-
-export NVM_DIR="$HOME/.nvm"
-source "/usr/local/opt/nvm/nvm.sh"
-
-export GTAGSLABEL=pygments
-export EMACS_USER_DIRECTORY="$HOME/.emacs.d"
 
 # k8s
 alias ks="kubectl exec --tty -it --namespace"

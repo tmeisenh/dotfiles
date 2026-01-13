@@ -11,7 +11,7 @@ export BRIGHT_CYAN="\033[96m"
 
 git remote prune origin
 
-SPECIAL_BRANCHES="${GIT_TIDY_SPECIAL_BRANCHES:-"main|master|release|dev|dev-2025-03-20|qa|demo"}"
+SPECIAL_BRANCHES="${GIT_TIDY_SPECIAL_BRANCHES:-"main|master|release|dev|qa|demo"}"
 
 local_branches=$(   git branch --format='%(refname:short)' --merged  \
                   | grep --invert-match \
@@ -45,4 +45,4 @@ case $yn in
     * ) echo -e "\nDoing nothing...have a good day\n"; exit 0;;
 esac
 
-[ -n "${local_branches}" ] && git branch --delete "${lb}"
+[ -n "${local_branches}" ] && echo "$local_branches" | xargs git branch --delete

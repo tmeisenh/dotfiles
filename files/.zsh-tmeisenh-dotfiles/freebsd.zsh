@@ -11,8 +11,8 @@
 # NOTE: you will want to install ports/ports-mgmt/pkg
 
 # color man pages, whoa...
-VIM=/usr/local/share/vim/vim73
-export MANPAGER="col -b | ${VIM}/macros/less.sh -c 'set ft=man nomod nolist nofoldenable' -"
+VIM_LESS=$(ls -d /usr/local/share/vim/vim*/macros/less.sh 2>/dev/null | tail -1)
+export MANPAGER="col -b | ${VIM_LESS} -c 'set ft=man nomod nolist nofoldenable' -"
 
 # Hash common directories
 hash -d log=/var/log
@@ -81,7 +81,7 @@ function unmount_ext2fs_usbstick() {
 # environment stuff
 #********************************************************************
 
-export JAVA_HOME=/usr/local/openjdk7
+export JAVA_HOME=$(ls -d /usr/local/openjdk* 2>/dev/null | sort -V | tail -1)
 export M2_HOME=/usr/local/share/java/maven3
 export ANT_HOME=/usr/local/share/java/apache-ant
 export GRADLE_HOME=/usr/local/share/java/gradle

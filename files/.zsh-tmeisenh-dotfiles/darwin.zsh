@@ -16,6 +16,9 @@ else
   export HOMEBREW_HOME="/usr/local"
 fi
 
+# GPG terminal pinentry support
+export GPG_TTY=$(tty)
+
 #openssl_bin=/usr/local/opt/openssl/bin # 4/2016 - Homebrew doesn't allow you to link openssl
 
 path=(
@@ -26,7 +29,7 @@ path=(
 # homebrew manpath additions
 if [ -d "$HOMEBREW_HOME/opt/coreutils/libexec/gnuman" ]; then
   manpath=(
-    "/usr/local/opt/coreutils/libexec/gnuman"
+    "$HOMEBREW_HOME/opt/coreutils/libexec/gnuman"
     "$manpath[@]"
   )
 fi
@@ -39,7 +42,7 @@ bindkey "^[[H" beginning-of-line ## home
 bindkey "^[[F" end-of-line       ## end
 
 # use vim for less, man, and git
-VIM_LESS=$(brew --prefix vim)/share/vim/vim91/macros/less.sh
+VIM_LESS=$(ls -d $(brew --prefix vim)/share/vim/vim*/macros/less.sh 2>/dev/null | tail -1)
 alias less=${VIM_LESS}
 
 export MANPAGER="col -b | ${VIM_LESS} -c 'set ft=man nomod nolist nofoldenable' -"
@@ -73,16 +76,6 @@ function diskeject() {
   drutil tray eject -drive $1
 }
 
-function fix_screensaver_old() {
-  local halfHour=1800
-  defaults -currentHost write com.apple.screensaver idleTime ${halfHour}
-}
-
-function fix_screensaver() {
-  # sets it to 3 hours
-  osascript -e 'tell application "System Events" to set delay interval of screen saver preferences to 10800 -- Number In Seconds'
-}
-
 function prevent_sleep() {
   sudo pmset -a disablesleep 1
 }
@@ -97,18 +90,35 @@ function launchd_mylist() {
 
 ## adds java
 export JAVA_HOME="$HOMEBREW_HOME/opt/openjdk@21"
-export PIP_BIN="$HOME/Library/Python/3.11/bin"
+PIP_BIN=$(ls -d "$HOME/Library/Python/3."*/bin 2>/dev/null | tail -1)
 path=(
   "$JAVA_HOME/bin"
-  "$PIP_BIN"
+  ${PIP_BIN:+"$PIP_BIN"}
   "$path[@]"
 )
 
-eval "$(rbenv init -)"
-[[ -d "$HOME/.nvm" ]] || mkdir -p "$HOME/.nvm"
-
+# Lazy-load rbenv - only initialize when ruby commands are first used
+rbenv() {
+  unfunction rbenv ruby gem bundle irb
+  eval "$(command rbenv init -)"
+  rbenv "$@"
+}
+ruby() { rbenv; command ruby "$@" }
+gem() { rbenv; command gem "$@" }
+bundle() { rbenv; command bundle "$@" }
+irb() { rbenv; command irb "$@" }
 export NVM_DIR="$HOME/.nvm"
-source_if_exists "$(brew --prefix nvm)/nvm.sh"
+[[ -d "$NVM_DIR" ]] || mkdir -p "$NVM_DIR"
+
+# Lazy-load nvm - only initialize when node commands are first used
+nvm() {
+  unfunction nvm node npm npx
+  source_if_exists "$(brew --prefix nvm)/nvm.sh"
+  nvm "$@"
+}
+node() { nvm; command node "$@" }
+npm() { nvm; command npm "$@" }
+npx() { nvm; command npx "$@" }
 
 export GTAGSLABEL=pygments
 export EMACS_USER_DIRECTORY=$HOME/.emacs.d

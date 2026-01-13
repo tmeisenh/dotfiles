@@ -19,8 +19,8 @@ bindkey "^[OA" up-line-or-search   ## up arrow for back-history-search
 bindkey "^[OB" down-line-or-search ## down arrow for fwd-history-search
 
 # color man pages, whoa...
-VIM=/usr/share/vim/vim73
-#export MANPAGER="col -b | $VIM/macros/less.sh -c 'set ft=man nomod nolist nofoldenable' -"
+VIM_LESS=$(ls -d /usr/share/vim/vim*/macros/less.sh 2>/dev/null | tail -1)
+#export MANPAGER="col -b | ${VIM_LESS} -c 'set ft=man nomod nolist nofoldenable' -"
 
 # Hash common directories
 hash -d log=/var/log
@@ -47,7 +47,7 @@ function unmount_ext2fs_usbstick() {
 # environment stuff
 #********************************************************************
 
-export JAVA_HOME=/usr/lib/jvm/java-6-oracle
+export JAVA_HOME=$(ls -d /usr/lib/jvm/java-*-openjdk* 2>/dev/null | sort -V | tail -1)
 export IDEA_JDK="$JAVA_HOME"
 export M3_HOME=/usr/local/apache-maven
 export ANT_HOME=/usr/local/share/java/apache-ant

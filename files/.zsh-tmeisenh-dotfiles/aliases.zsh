@@ -29,7 +29,7 @@ alias utar="tar --verbose --extract --gzip --file"
 alias ltar="tar --verbose --list --gzip --file"
 alias gz=gunzip
 alias se="smartextract"
-alias ds="du -csh"  # Removed positional parameter which doesn't work in aliases
+alias ds="du -csh"
 alias pingg="ping -c 3 www.google.com"
 alias dtsp="date +%F"
 

@@ -5,10 +5,15 @@ set -e
 target=$HOME
 
 setup_vim() {
-  if [ ! -d "$target"/.vim/vundle ]; then
-    git clone https://github.com/gmarik/vundle.git "$target"/.vim/bundle/vundle
+  # Install vim-plug if not present
+  if [ ! -f "$target"/.vim/autoload/plug.vim ]; then
+    echo "Installing vim-plug..."
+    curl -fLo "$target"/.vim/autoload/plug.vim --create-dirs \
+      https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   fi
-  vim +BundleInstall +qall
+
+  echo "Installing plugins..."
+  vim +PlugInstall +qall
 }
 
 setup_vim

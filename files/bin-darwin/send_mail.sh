@@ -5,7 +5,6 @@
 # to convert the line endings.
 #
 # Author: Travis B. Meisenheimer
-# Version: $Id$
 
 # Set executables
 mailx=/usr/bin/mailx
@@ -28,7 +27,7 @@ EOF
 }
 
 # Parse options
-while getopts ":ht:s:m:a:e:l:p:" OPTION; do
+while getopts ":ht:s:m:a:" OPTION; do
     case $OPTION in
     h)
         usage

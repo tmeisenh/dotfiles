@@ -48,7 +48,7 @@ for arg in "$@"; do
 done
 
 stow_check() {
-  if [ ! -f "$(which stow)" ]; then
+  if ! command -v stow >/dev/null 2>&1; then
     echo "Please install stow OR ensure it is in $PATH."
     echo '  See http://www.gnu.org/software/stow/'
     echo ''

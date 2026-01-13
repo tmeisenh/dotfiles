@@ -15,7 +15,7 @@
 
 # Add zsh-completions to fpath
 fpath=(
-  /usr/local/share/zsh-completions
+  $HOMEBREW_HOME/share/zsh-completions
   $fpath
 )
 
@@ -64,7 +64,7 @@ zstyle ':completion:*:correct:*' original true
 zstyle ':completion:*:corrections' format '%B%d (errors: %e)%b'
 zstyle ':completion:*:descriptions' format "%d"
 zstyle ':completion:*:messages' format '%d'
-zstyle ':completion:*:warnings' format '%d--No matches for: %d'
+zstyle ':completion:*:warnings' format 'No matches for: %d'
 
 # Describe options in full
 zstyle ':completion:*:options' description 'yes'
@@ -72,6 +72,9 @@ zstyle ':completion:*:options' auto-description '%d'
 
 # Completion caching
 zstyle ':completion:*' use-cache 1 cache-path $ZSHCACHEDIR
+
+# Auto-detect newly installed commands
+zstyle ':completion:*' rehash true
 
 # Expand partial paths
 zstyle ':completion:*' expand 'yes'

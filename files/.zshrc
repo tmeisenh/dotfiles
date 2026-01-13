@@ -15,25 +15,13 @@ source_if_exists "$HOME/.zsh-tmeisenh-dotfiles/antigen.zsh"
 source_if_exists /etc/profile
 
 # Some environment variables and settings
-USER=$(id -un)
-export USER
-HOSTNAME=$(hostname)
-export HOSTNAME
-export LC_ALL=en_US.utf-8
+export LC_ALL=en_US.UTF-8
 export LANG=$LC_ALL
 export EDITOR='vi' # For shell things I prefer vi/vim.
 export PAGER='less'
 export ZSHCACHEDIR=$HOME/.zsh-cache
 export ZSHCONF=$HOME/.zsh-tmeisenh-dotfiles
 bindkey -v #vi key bindings
-
-# Set term if not set
-#if [ "$TERM" = "" -o "$TERM" = "unknown" ]; then
-#    $TERM="vt100"
-#    if [ "`uname`" = "Linux" ]; then
-#        $TERM="linux"
-#    fi
-#fi
 
 # Set Logs and History
 watch=(notme root)
@@ -81,10 +69,8 @@ manpath=(
 export ZLS_COLORS=$LS_COLORS
 
 # Use hard limits, except for a smaller stack and no core dumps
-unlimit
 limit stack 8192
 limit core 0
-limit coredumpsize 0
 limit -s
 
 # Load shell options

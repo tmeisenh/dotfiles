@@ -37,11 +37,15 @@ setopt nullglob           # Delete patterns with no matches instead of error
 # ----------------------
 # History Options
 # ----------------------
-setopt append_history     # Append to history file rather than overwrite
-setopt extended_history   # Save timestamp and duration in history
-setopt bang_hist          # Enable history expansion with !
-setopt hist_ignore_dups   # Don't save duplicate commands
-setopt share_history      # Share history between sessions
+setopt append_history          # Append to history file rather than overwrite
+setopt extended_history        # Save timestamp and duration in history
+setopt bang_hist               # Enable history expansion with !
+setopt hist_ignore_dups        # Don't save duplicate commands
+setopt hist_ignore_space       # Commands starting with space aren't recorded (useful for secrets)
+setopt hist_verify             # Show expanded history command before executing
+setopt hist_reduce_blanks      # Remove extra whitespace from history entries
+setopt hist_expire_dups_first  # Delete duplicates first when trimming history
+setopt share_history           # Share history between sessions
 
 # ----------------------
 # Directory Navigation
@@ -79,9 +83,10 @@ setopt markdirs           # Add trailing / to directory names in completion
 # ----------------------
 # Input Options
 # ----------------------
-setopt zle                # Enable ZLE (Zsh Line Editor)
-setopt vi                 # Use vi key bindings in ZLE
-setopt no_sh_word_split   # Don't split words on unquoted parameter expansions
+setopt zle                  # Enable ZLE (Zsh Line Editor)
+setopt vi                   # Use vi key bindings in ZLE
+setopt no_sh_word_split     # Don't split words on unquoted parameter expansions
+setopt interactive_comments # Allow comments in interactive shell
 #unsetopt correct          # Don't try to correct spelling of commands
 #setopt correct_all       # Try to correct spelling of all arguments (disabled)
 

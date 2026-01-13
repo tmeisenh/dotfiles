@@ -1,22 +1,22 @@
 [user]
 	name = Travis Meisenheimer
 	email = travis@indexoutofbounds.com
-signingkey = FC14F9C3
+	signingkey = FC14F9C3
+
+[commit]
+	gpgsign = true
+
+[tag]
+	gpgsign = true
 
 [github]
 user = tmeisenh
 
 [color]
-ui = auto
-interactive = auto
-status = auto
-commit = auto
-diff = auto
-branch = auto
+	ui = auto
 
 [apply]
-whitespace = strip
-whitespace = nowarn
+	whitespace = nowarn
 
 [alias]
 br = branch
@@ -37,7 +37,8 @@ remaster = !git fetch && git rebase origin/master
 remain = !git fetch && git rebase origin/main
 ; rebar = !git fetch && git rebase --interactive origin/master 
 st = status
-stats=shortlog --numbered --summary
+sw = switch
+stats = shortlog --numbered --summary
 staged = diff --staged
 sub = submodule update --init --recursive
 svn-pull = !git svn fetch && git svn rebase
@@ -58,7 +59,33 @@ default = simple
 rebase = true
 
 [init]
-defaultBranch = master
+	defaultBranch = master
+
+[fetch]
+	prune = true
+	fsckobjects = true
+
+[transfer]
+	fsckobjects = true
+
+[receive]
+	fsckObjects = true
+
+[rerere]
+	enabled = true
+
+[merge]
+	conflictstyle = zdiff3
+
+[rebase]
+	autosquash = true
+	autostash = true
+
+[diff]
+	algorithm = histogram
+
+[branch]
+	sort = -committerdate
 
 ; Include gitconfig for work that over-rides name/email/key and isn't stored dotfiles.
 [include]

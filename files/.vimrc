@@ -1,6 +1,6 @@
 " .vimrc
 " See https://github.com/tmeisenh/vim
- 
+
 " Deal with unicode characters even if system locale is incorrect
 scriptencoding utf8
 
@@ -13,8 +13,8 @@ set shortmess+=I        " Don't show the Vim welcome screen
 
 let mapleader=","       " Set this early in case other things use it
 
-" load up bundles
-source $HOME/.vim/bundle.vim
+" load plugins
+source $HOME/.vim/plugins.vim
 
 colorscheme hybrid
 
@@ -24,15 +24,6 @@ filetype plugin indent on
 
 " Set console highlights to be readable with black background
 set bg=dark
-
-" Make GUI colors light on dark
-hi Normal guibg=black guifg=white
-
-" Make pasting work much better
-nmap <silent> <S-Insert> :set paste<CR>"+p:set nopaste<CR>
-
-"set autoindent          " Copy indent from current line for new line
-"set nosmartindent       " 'smartindent' breaks right-shifting of # lines
 
 set history=1000        " Remember this many commands
 
@@ -50,7 +41,6 @@ set splitright          " Split new vertical windows right of current window
 set winminheight=0      " Allow windows to shrink to status line.
 set winminwidth=0       " Allow windows to shrink to vertical separator.
 
-set lbr                 " Wrap line on word boundaries
 set nowrap
 
 set expandtab           " Insert spaces for <Tab> press; use spaces to indent.
@@ -59,7 +49,6 @@ set tabstop=2           " Set the visible width of tabs.
 set softtabstop=2       " Edit as if tabs are 2 characters wide.
 set shiftwidth=2        " Number of spaces to use for indent and unindent.
 set shiftround          " Round indent to a multiple of 'shiftwidth'.
-set showcmd             " Letting me know I'm in 'leader' mode
 
 set wildmode=list:longest,full
 set wildmenu
@@ -84,9 +73,6 @@ set backspace=indent,eol,start
 
 set whichwrap+=<,>,[,]
 
-"set listchars=tab:>-,trail:·
-"set list
-
 " Update the swap file every 20 characters. I don't like to lose stuff.
 "
 set updatecount=20
@@ -101,6 +87,3 @@ source $HOME/.vim/platform_setup.vim
 
 " Load key mappings
 source $HOME/.vim/key_maps.vim
-
-" Load commands
-source $HOME/.vim/commands.vim

@@ -30,3 +30,6 @@ bindkey '^R' history-incremental-search-backward
 
 # Use built-in file completion
 bindkey '^X\t' expand-or-complete-prefix
+
+# Shift+Tab to go backward in completion menu
+bindkey '^[[Z' reverse-menu-complete

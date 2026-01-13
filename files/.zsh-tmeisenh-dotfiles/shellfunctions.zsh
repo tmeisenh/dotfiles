@@ -162,9 +162,9 @@ delete_remote_git_tag() {
 
 strip_spaces_from_files() {
   local target_dir="${1:-.}"
-  
-  # Use zsh's built-in string manipulation instead of bash -c
-  for file in $(find "$target_dir" -type f -name "* *"); do
+
+  # Use null-delimited find to handle special characters safely
+  find "$target_dir" -type f -name "* *" -print0 | while IFS= read -r -d '' file; do
     local new_name="${file// /_}"
     [[ "$file" != "$new_name" ]] && mv -f "$file" "$new_name"
   done
@@ -175,33 +175,4 @@ normalize_filename() {
   local new_name="${file// /_}"
   
   [[ "$file" != "$new_name" ]] && mv -f "$file" "$new_name"
-}
-
-# SSL certificate utilities
-read_x509() {
-  openssl x509 -noout -text -in "$1"
-}
-
-read_CSR() {
-  openssl req -noout -text -in "$1"
-}
-
-check_CSR() {
-  openssl req -text -noout -verify -in "$1"
-}
-
-# Check certificate expiration date
-cert_expiry() {
-  local cert_file="$1"
-  
-  # Show certificate end date
-  openssl x509 -noout -enddate -in "$cert_file"
-  
-  # Calculate days until expiration
-  local expiry_date=$(openssl x509 -noout -enddate -in "$cert_file" | cut -d= -f2)
-  local expiry_epoch=$(date -j -f "%b %d %H:%M:%S %Y %Z" "$expiry_date" +%s 2>/dev/null)
-  local now_epoch=$(date +%s)
-  local days_left=$(( (expiry_epoch - now_epoch) / 86400 ))
-  
-  echo "Days until expiration: $days_left"
 }
