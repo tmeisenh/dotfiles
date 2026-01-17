@@ -22,4 +22,5 @@ antigen apply
 # Note: conflicts with keys.zsh
 bindkey '^[[A' history-substring-search-up      # Up arrow
 bindkey '^[[B' history-substring-search-down    # Down arrow
-bindkey '^E' autosuggest-accept # control e
+# Double semicolon to accept autosuggestion (home row friendly)
+bindkey -s ';;' '^[[F'
