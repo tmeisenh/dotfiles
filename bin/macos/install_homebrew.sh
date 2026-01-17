@@ -15,17 +15,18 @@ install_brew() {
   fi
 }
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
 install_brew
 brew doctor
 brew update
-brew bundle
-
-echo "linking emacs"
-#brew linkapps emacs-plus
+brew bundle --file="$SCRIPT_DIR/Brewfile.basic"
 
 echo ""
 echo ""
 echo "All done with basic install"
 echo "You need to reboot for some changes (like fonts) to be applied"
 echo ""
+echo "To install home-specific packages, run:"
+echo "  brew bundle --file=$SCRIPT_DIR/Brewfile.home"
 echo ""
