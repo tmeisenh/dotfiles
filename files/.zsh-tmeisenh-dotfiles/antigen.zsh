@@ -17,10 +17,3 @@ antigen bundle zsh-users/zsh-history-substring-search
 
 # Tell Antigen that you're done
 antigen apply
-
-# Key bindings for history-substring-search
-# Note: conflicts with keys.zsh
-bindkey '^[[A' history-substring-search-up      # Up arrow
-bindkey '^[[B' history-substring-search-down    # Down arrow
-# Double semicolon to accept autosuggestion (home row friendly)
-bindkey -s ';;' '^[[F'

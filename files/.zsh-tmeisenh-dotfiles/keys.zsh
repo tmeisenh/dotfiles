@@ -33,3 +33,9 @@ bindkey '^X\t' expand-or-complete-prefix
 
 # Shift+Tab to go backward in completion menu
 bindkey '^[[Z' reverse-menu-complete
+
+# antigen plugins
+bindkey '^[[A' history-substring-search-up      # Up arrow
+bindkey '^[[B' history-substring-search-down    # Down arrow
+# Double semicolon to accept autosuggestion (home row friendly)
+bindkey -s ';;' '^[[F'

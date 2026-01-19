@@ -79,6 +79,7 @@ source_if_exists "$ZSHCONF"/options.zsh
 source_if_exists "$ZSHCONF"/completions.zsh
 
 # Configure keys working (never works by default)
+# Note: must be loaded after options due to zle vi keybinding enablement
 source_if_exists "$ZSHCONF"/keys.zsh
 
 # Configure prompt
