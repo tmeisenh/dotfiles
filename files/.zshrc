@@ -21,7 +21,6 @@ export EDITOR='vi' # For shell things I prefer vi/vim.
 export PAGER='less'
 export ZSHCACHEDIR=$HOME/.zsh-cache
 export ZSHCONF=$HOME/.zsh-tmeisenh-dotfiles
-bindkey -v #vi key bindings
 
 # Set Logs and History
 watch=(notme root)
