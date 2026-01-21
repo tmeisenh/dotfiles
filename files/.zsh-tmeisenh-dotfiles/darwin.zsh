@@ -111,14 +111,14 @@ export NVM_DIR="$HOME/.nvm"
 [[ -d "$NVM_DIR" ]] || mkdir -p "$NVM_DIR"
 
 # Lazy-load nvm - only initialize when node commands are first used
-nvm() {
-  unfunction nvm node npm npx
+_init_nvm() {
+  unfunction nvm node npm npx _init_nvm 2>/dev/null
   source_if_exists "$(brew --prefix nvm)/nvm.sh"
-  nvm "$@"
 }
-node() { nvm; command node "$@" }
-npm() { nvm; command npm "$@" }
-npx() { nvm; command npx "$@" }
+nvm() { _init_nvm; nvm "$@" }
+node() { _init_nvm; node "$@" }
+npm() { _init_nvm; npm "$@" }
+npx() { _init_nvm; npx "$@" }
 
 export GTAGSLABEL=pygments
 export EMACS_USER_DIRECTORY=$HOME/.emacs.d
