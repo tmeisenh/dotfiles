@@ -19,9 +19,6 @@ echo -e "
 ###     Finder     ###
 ######################
 "
-echo -e "Finder: allow text selection in Quick Look $CHK"
-defaults write com.apple.finder QLEnableTextSelection -bool true
-
 echo -e "Finder: show hidden files by default $CHK"
 defaults write com.apple.finder AppleShowAllFiles -bool true
 
@@ -90,12 +87,6 @@ defaults write com.apple.Safari SuppressSearchSuggestions -bool true
 echo -e "Hiding Safari's bookmarks bar by default $CHK"
 defaults write com.apple.Safari ShowFavoritesBar -bool false
 
-echo -e "Hiding Safari's sidebar in Top Sites $CHK"
-defaults write com.apple.Safari ShowSidebarInTopSites -bool false
-
-echo -e "Disabling Safari's thumbnail cache for History and Top Sites $CHK"
-defaults write com.apple.Safari DebugSnapshotsUpdatePolicy -int 2
-
 echo -e "Enabling Safari's debug menu $CHK"
 defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
 
@@ -117,17 +108,6 @@ echo -e "Disabling the annoying backswipe in Chrome $CHK"
 defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool false
 defaults write com.google.Chrome.canary AppleEnableSwipeNavigateWithScrolls -bool false
 
-#echo -e "Using the system-native print preview dialog in Chrome $CHK"
-#defaults write com.google.Chrome DisablePrintPreview -bool true
-#defaults write com.google.Chrome.canary DisablePrintPreview -bool true
-
-echo -e "
-#############################
-###     Remote Access     ###
-#############################
-"
-sudo systemsetup -f -setremotelogin on
-sudo launchctl load -w /System/Library/LaunchDaemons/com.apple.screensharing.plist
 
 echo -e "
 #############################
@@ -141,9 +121,6 @@ defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
 
 echo -e "Show IP address, hostname, OS version when clicking the clock in the login window $CHK"
 sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
-
-echo -e "Check for software updates daily, not just once per week $CHK"
-defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
 
 echo -e "Enable full keyboard access for all controls $CHK"
 echo -e "(e.g. enable Tab in modal dialogs)"
@@ -161,7 +138,7 @@ echo -e "Automatically quit printer app once the print jobs complete $CHK"
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 
 echo -e "Set a really fast key repeat $CHK"
-defaults write NSGlobalDomain KeyRepeat -int 0
+defaults write NSGlobalDomain KeyRepeat -int 1
 
 echo -e "Disable press-and-hold for keys in favor of key repeat $CHK"
 defaults write -g ApplePressAndHoldEnabled -bool false
