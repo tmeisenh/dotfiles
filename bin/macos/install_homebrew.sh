@@ -18,6 +18,10 @@ install_brew() {
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 install_brew
+
+# Fix zsh compaudit warning about insecure directories
+chmod 755 "$(brew --prefix)/share"
+
 brew doctor
 brew update
 brew bundle --file="$SCRIPT_DIR/Brewfile.basic"
