@@ -10,6 +10,7 @@ force=""
 pretend=""
 delete=""
 vscode="$HOME/Library/Application Support/Code/User"
+dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 usage() {
   cat <<EOF
@@ -64,8 +65,8 @@ stow_check() {
 }
 
 stow_it() {
-  stow --verbose --no-folding $pretend $delete --target="${target}" "$force" files || echo "Unable to stow."
-  stow --verbose $pretend $delete --target="${vscode}" "$force" vscode || echo "Unable to stow vscode."
+  stow --dir="${dir}" --verbose --no-folding $pretend $delete --target="${target}" $force files || echo "Unable to stow."
+  stow --dir="${dir}" --verbose --no-folding $pretend $delete --target="${vscode}" $force vscode || echo "Unable to stow vscode."
 }
 
 stow_check
