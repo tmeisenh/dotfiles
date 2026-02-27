@@ -20,7 +20,7 @@
     "**/.classpath": true,
     "**/.project": true,
     "**/.settings": true,
-    "**/.factorypath": true
+    "**/.factorypath": true,
   },
   "editor.snippetSuggestions": "top",
   "workbench.editor.enablePreviewFromQuickOpen": false,
@@ -31,14 +31,14 @@
   "terminal.integrated.cursorStyle": "line",
   "terminal.integrated.profiles.osx": {
     "travis": {
-      "path": "~/bin/tmux-from-here.sh"
-    }
+      "path": "~/bin/tmux-from-here.sh",
+    },
   },
   "terminal.integrated.defaultProfile.osx": "zsh",
   "search.exclude": {
     "**/node_modules": true,
     "**/bower_components": true,
-    "**/.vscode": true
+    "**/.vscode": true,
   },
   "editor.autoIndent": "full",
   "workbench.colorCustomizations": {
@@ -51,7 +51,7 @@
     "statusBar.background": "#00af00",
     "statusBar.foreground": "#000000",
     "statusBarItem.remoteBackground": "#00af00",
-    "statusBarItem.remoteForeground": "#000000"
+    "statusBarItem.remoteForeground": "#000000",
   },
   "editor.minimap.renderCharacters": true,
   "breadcrumbs.enabled": true,
@@ -72,76 +72,76 @@
   "typescript.preferences.importModuleSpecifier": "relative",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "[scss]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+    "source.fixAll.eslint": "explicit",
   },
   "peacock.favoriteColors": [
     {
       "name": "Angular Red",
-      "value": "#b52e31"
+      "value": "#b52e31",
     },
     {
       "name": "Auth0 Orange",
-      "value": "#eb5424"
+      "value": "#eb5424",
     },
     {
       "name": "Azure Blue",
-      "value": "#007fff"
+      "value": "#007fff",
     },
     {
       "name": "C# Purple",
-      "value": "#68217A"
+      "value": "#68217A",
     },
     {
       "name": "Gatsby Purple",
-      "value": "#639"
+      "value": "#639",
     },
     {
       "name": "Go Cyan",
-      "value": "#5dc9e2"
+      "value": "#5dc9e2",
     },
     {
       "name": "Java Blue-Gray",
-      "value": "#557c9b"
+      "value": "#557c9b",
     },
     {
       "name": "JavaScript Yellow",
-      "value": "#f9e64f"
+      "value": "#f9e64f",
     },
     {
       "name": "Mandalorian Blue",
-      "value": "#1857a4"
+      "value": "#1857a4",
     },
     {
       "name": "Node Green",
-      "value": "#215732"
+      "value": "#215732",
     },
     {
       "name": "React Blue",
-      "value": "#00b3e6"
+      "value": "#00b3e6",
     },
     {
       "name": "Something Different",
-      "value": "#832561"
+      "value": "#832561",
     },
     {
       "name": "Vue Green",
-      "value": "#42b883"
-    }
+      "value": "#42b883",
+    },
   ],
   "cSpell.userWords": [
     "Boop",
@@ -163,7 +163,7 @@
     "troutd",
     "uuidv",
     "verifone",
-    "xread"
+    "xread",
   ],
   "typescript.tsserver.log": "off",
   "typescript.tsserver.maxTsServerMemory": 4092,
@@ -176,7 +176,7 @@
   "vim.normalModeKeyBindingsNonRecursive": [
     {
       "before": ["<space>"],
-      "commands": ["vspacecode.space"]
+      "commands": ["vspacecode.space"],
     },
     {
       "before": [","],
@@ -184,15 +184,15 @@
         "vspacecode.space",
         {
           "command": "whichkey.triggerKey",
-          "args": "m"
-        }
-      ]
-    }
+          "args": "m",
+        },
+      ],
+    },
   ],
   "vim.visualModeKeyBindingsNonRecursive": [
     {
       "before": ["<space>"],
-      "commands": ["vspacecode.space"]
+      "commands": ["vspacecode.space"],
     },
     {
       "before": [","],
@@ -200,10 +200,10 @@
         "vspacecode.space",
         {
           "command": "whichkey.triggerKey",
-          "args": "m"
-        }
-      ]
-    }
+          "args": "m",
+        },
+      ],
+    },
   ],
   // space code over-rides
   "vspacecode.bindingOverrides": [
@@ -211,13 +211,13 @@
       "keys": "f.f",
       "name": "Open file/folder",
       "type": "command",
-      "command": "workbench.action.quickOpen"
+      "command": "workbench.action.quickOpen",
     },
     {
       "keys": "j.d",
       "name": "Jump to def.",
       "type": "command",
-      "command": "editor.action.goToDeclaration"
+      "command": "editor.action.goToDeclaration",
     },
     {
       "keys": "p.t",
@@ -228,16 +228,16 @@
           "key": "",
           "name": "Show explorer view",
           "type": "command",
-          "command": "workbench.view.explorer"
+          "command": "workbench.view.explorer",
         },
         {
           "key": "when:sideBarVisible && explorerViewletVisible",
           "name": "Hide side bar",
           "type": "command",
-          "command": "workbench.action.toggleSidebarVisibility"
-        }
-      ]
-    }
+          "command": "workbench.action.toggleSidebarVisibility",
+        },
+      ],
+    },
   ],
   "json.maxItemsComputed": 5000000,
   "editor.tabSize": 8,
@@ -249,34 +249,35 @@
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
   "[shellscript]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
+    "editor.defaultFormatter": "foxundermoon.shell-format",
   },
   "[dockerfile]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
+    "editor.defaultFormatter": "foxundermoon.shell-format",
   },
   "[xml]": {
-    "editor.defaultFormatter": "redhat.vscode-xml"
+    "editor.defaultFormatter": "redhat.vscode-xml",
   },
   "redhat.telemetry.enabled": false,
   "[java]": {
-    "editor.defaultFormatter": "redhat.java"
+    "editor.defaultFormatter": "redhat.java",
   },
   "editor.guides.indentation": false,
   "[dotenv]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
+    "editor.defaultFormatter": "foxundermoon.shell-format",
   },
   "explorer.confirmDragAndDrop": false,
   "[sql]": {
-    "editor.defaultFormatter": "mtxr.sqltools"
+    "editor.defaultFormatter": "mtxr.sqltools",
   },
   "javascript.updateImportsOnFileMove.enabled": "always",
   "typescript.updateImportsOnFileMove.enabled": "always",
   "makefile.configureOnOpen": true,
   "[ignore]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
+    "editor.defaultFormatter": "foxundermoon.shell-format",
   },
   "explorer.confirmPasteNative": false,
   "[properties]": {
-    "editor.defaultFormatter": "foxundermoon.shell-format"
-  }
+    "editor.defaultFormatter": "foxundermoon.shell-format",
+  },
+  "claudeCode.preferredLocation": "sidebar",
 }
