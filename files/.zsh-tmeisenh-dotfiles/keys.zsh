@@ -23,6 +23,11 @@ bindkey " " magic-space            ## do history expansion on space
 # stty erase "$(tput kbs)" # Uses terminal's defined backspace character from terminfo database
 stty erase '^?'      # Sets backspace to the standard DEL character (ASCII 127)
 
+# Allow backspace to delete past insert point in vi insert mode
+# Mimics vim's 'set backspace=indent,eol,start'
+bindkey -M viins '^?' backward-delete-char
+bindkey -M viins '^H' backward-delete-char
+
 # Binding of the keys for command line editing
 # Just hit control plus key!
 bindkey '^L' clear-screen
