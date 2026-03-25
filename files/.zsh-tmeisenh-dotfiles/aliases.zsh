@@ -31,6 +31,7 @@ alias gz=gunzip
 alias se="smartextract"
 alias ds="du -csh"
 alias pingg="ping -c 3 www.google.com"
+alias pinggg="ping -c 3 8.8.8.8"
 alias dtsp="date +%F"
 
 alias vi="vim"
