@@ -8,9 +8,6 @@
 # Source utils file first to get utility functions like source_if_exists
 source "$HOME/.zsh-tmeisenh-dotfiles/utils.zsh"
 
-# Source antigen for plugin management
-source_if_exists "$HOME/.zsh-tmeisenh-dotfiles/antigen.zsh"
-
 # Source /etc/profile
 source_if_exists /etc/profile
 
@@ -94,6 +91,9 @@ source_if_exists "$ZSHCONF"/shellfunctions.zsh
 # Load distro specific settings (darwin, freebsd, linux, etc)
 distro_zsh="${ZSHCONF}/${_os}.zsh"
 source_if_exists "${distro_zsh}"
+
+# Load plugins (distro file sets ANTIDOTE_HOME)
+source_if_exists "$ZSHCONF/plugins.zsh"
 
 # Load system specific settings (box1, box2, etc)
 host_zsh="${ZSHCONF}/host-$(hostname | tr "[:upper:]" "[:lower:]").zsh"
