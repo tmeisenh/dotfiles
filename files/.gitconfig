@@ -80,7 +80,3 @@ rebase = true
 
 [branch]
 	sort = -committerdate
-
-; Include gitconfig for work that over-rides name/email/key and isn't stored dotfiles.
-[include]
- path = ~/.gitconfig.work
