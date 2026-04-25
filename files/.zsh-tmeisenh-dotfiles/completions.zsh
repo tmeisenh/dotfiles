@@ -13,12 +13,6 @@
 # Remove existing comp cache
 #rm -rf $HOME/.zcompdump
 
-# Add zsh-completions to fpath
-fpath=(
-  $HOMEBREW_HOME/share/zsh-completions
-  $fpath
-)
-
 # load compinit!
 autoload -U compinit && compinit
 
