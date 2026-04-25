@@ -9,12 +9,7 @@
 #********************************************************************
 
 ## setup homebrew
-chip=$(uname -p)
-if [[ $chip == "arm" ]]; then
-  export HOMEBREW_HOME="/opt/homebrew"
-else
-  export HOMEBREW_HOME="/usr/local"
-fi
+export HOMEBREW_HOME="/opt/homebrew"
 
 # GPG terminal pinentry support
 export GPG_TTY=$(tty)
