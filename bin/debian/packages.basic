@@ -1,0 +1,12 @@
+bash-completion
+ca-certificates
+coreutils
+git
+git-gui
+less
+stow
+vim
+vim-tiny
+wget
+zsh
+zsh-antidote
