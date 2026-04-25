@@ -9,4 +9,4 @@ antidote load
 
 bindkey '^[[A' history-substring-search-up      # Up arrow
 bindkey '^[[B' history-substring-search-down    # Down arrow
-bindkey -s ';;' '^[[F'                          # Double semicolon to accept autosuggestion
+bindkey ';;' autosuggest-accept                 # Double semicolon to accept autosuggestion
