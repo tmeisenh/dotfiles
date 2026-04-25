@@ -53,6 +53,8 @@ export M3_HOME=/usr/local/apache-maven
 export ANT_HOME=/usr/local/share/java/apache-ant
 export GRADLE_HOME=/usr/local/gradle
 export ANDROID_HOME=~/android-sdk/sdk
+export ANTIDOTE_HOME=~/.antidote
+export ANTIDOTE_ZSH=/usr/share/zsh-antidote/antidote.zsh
 
 path=(
   "$JAVA_HOME/bin"
