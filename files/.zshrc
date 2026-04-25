@@ -39,11 +39,8 @@ typeset -U path cdpath manpath fpath
 # autoload zargs
 autoload colors && colors
 autoload history-search-end
-autoload zkbd
+# autoload zkbd
 zmodload -i zsh/complist
-autoload -U predict-on &&
-  zle -N predict-on &&
-  zle -N predict-off
 
 # set common paths
 path=(
@@ -60,8 +57,9 @@ manpath=(
   $manpath
 )
 
+_os=$(uname | tr "[:upper:]" "[:lower:]")
 [[ -d $HOME/bin ]] && path=($HOME/bin $path)
-[[ -d $HOME/bin-$(uname | tr "[:upper:]" "[:lower:]") ]] && path=($HOME/bin-$(uname | tr "[:upper:]" "[:lower:]") $path)
+[[ -d $HOME/bin-${_os} ]] && path=($HOME/bin-${_os} $path)
 
 # Load custom LS_COLORS
 [[ -e $ZSHCONF/ls_colors.sh ]] && source "$ZSHCONF"/ls_colors.sh
@@ -94,7 +92,7 @@ source_if_exists "$ZSHCONF"/shellfunctions.zsh
 ## Now, allow for system, host, etc customizations
 
 # Load distro specific settings (darwin, freebsd, linux, etc)
-distro_zsh="${ZSHCONF}/$(uname | tr "[:upper:]" "[:lower:]").zsh"
+distro_zsh="${ZSHCONF}/${_os}.zsh"
 source_if_exists "${distro_zsh}"
 
 # Load system specific settings (box1, box2, etc)

@@ -34,6 +34,7 @@ alias pingg="ping -c 3 www.google.com"
 alias pinggg="ping -c 3 8.8.8.8"
 alias dtsp="date +%F"
 
+alias pskill='pkill -f'
 alias vi="vim"
 alias svi="sudo vim"
 # bash bulletin man pages!!

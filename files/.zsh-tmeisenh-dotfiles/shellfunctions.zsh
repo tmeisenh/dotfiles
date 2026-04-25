@@ -6,12 +6,6 @@
 # Works on zsh versions > 4.0.9.
 #********************************************************************
 
-# Usage: pskill <application/program name>
-# Description: kills a process
-pskill() {
-  pkill -f "$1"
-}
-
 # Usage: killport <port number>
 # Description: kills the process listening on the given port
 killport() {
@@ -19,7 +13,7 @@ killport() {
   
   if [[ -n "$pids" ]]; then
     echo "Killing processes on port $1: $pids"
-    kill -9 $pids 2>/dev/null
+    kill -9 ${=pids} 2>/dev/null
   else
     echo "No process found listening on port $1"
   fi
@@ -97,27 +91,27 @@ showarchive() {
 # Usage: ssh-automate-login <user@hostname>
 ssh-automate-login() {
   local remote_host="$1"
-  local key_path="$HOME/.ssh/id_rsa"
-  
+  local key_type="ed25519"
+  local key_path="$HOME/.ssh/id_${key_type}"
+
   if [[ -z "$remote_host" ]]; then
     echo "Error: No remote host specified"
     echo "Usage: ssh-automate-login <user@hostname>"
     return 1
   fi
 
-  echo "Checking for existing RSA key..."
-  
+  echo "Checking for existing ${key_type} key..."
+
   if [[ ! -f "$key_path" ]]; then
-    echo "No RSA key found, generating a 4096 bit RSA key."
-    echo "Hit enter/return for no passphrase (or enter a passphrase for better security)."
-    ssh-keygen -t rsa -b 4096 -f "$key_path"
+    echo "No ${key_type} key found, generating one."
+    ssh-keygen -t "$key_type" -f "$key_path"
   else
     echo "Found existing SSH key at $key_path, using that."
   fi
 
   echo "Copying public key to $remote_host..."
   ssh-copy-id -i "${key_path}.pub" "$remote_host"
-  
+
   echo "Done! You should now be able to connect without a password."
   echo "Try: ssh $remote_host"
 }
@@ -131,13 +125,6 @@ unix_timestamp_to_date() {
     # Linux date command
     date -d "@$1"
   fi
-}
-
-delete_dsstore() {
-  local target_dir="${1:-.}"
-  
-  # Use -delete which is more efficient than -exec rm
-  find "$target_dir" -type f -name ".DS_Store" -delete
 }
 
 import_gpg_keys_from_usb() {
@@ -165,8 +152,7 @@ strip_spaces_from_files() {
 
   # Use null-delimited find to handle special characters safely
   find "$target_dir" -type f -name "* *" -print0 | while IFS= read -r -d '' file; do
-    local new_name="${file// /_}"
-    [[ "$file" != "$new_name" ]] && mv -f "$file" "$new_name"
+    normalize_filename "$file"
   done
 }
 

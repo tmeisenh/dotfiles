@@ -38,9 +38,10 @@ bindkey "^[[F" end-of-line       ## end
 
 # use vim for less, man, and git
 VIM_LESS=$(ls -d $(brew --prefix vim)/share/vim/vim*/macros/less.sh 2>/dev/null | tail -1)
-alias less=${VIM_LESS}
-
-export MANPAGER="col -b | ${VIM_LESS} -c 'set ft=man nomod nolist nofoldenable' -"
+if [[ -n "$VIM_LESS" ]]; then
+  alias less="$VIM_LESS"
+  export MANPAGER="col -b | ${VIM_LESS} -c 'set ft=man nomod nolist nofoldenable' -"
+fi
 export GIT_PAGER='less'
 export GIT_EDITOR='vim'
 
@@ -48,9 +49,6 @@ alias ctags-objc="ctags --languages=objectivec --langmap=objectivec:.h.m"
 # Use gnu-ls if available otherwise use the (freebsd) version
 gls &>/dev/null 2>&1 && alias ls="gls --color -F -T 0 -b -h -X -H" || alias ls="ls -F -T -b -h -C -G"
 
-# xcode alias and completion
-alias xcode="open -a Xcode"
-compctl -g '*.(xcworkspace|xcodeproj)' + -g '*(-/)' xcode
 
 # opens any workspace in the current working directory
 function openws() {
@@ -73,10 +71,6 @@ function diskeject() {
 
 function prevent_sleep() {
   sudo pmset -a disablesleep 1
-}
-
-function remove_dstore() {
-  find . -maxdepth 1 -type f -name ".DS_Store" -exec rm -vf {} \;
 }
 
 function launchd_mylist() {
