@@ -7,7 +7,7 @@ This repo (and dotfiles-private) have been ingested into the memory MCP knowledg
 
 **Critical zsh gotcha:** Keybindings must go in keys.zsh, not plugins.zsh. `setopt vi` in options.zsh resets all bindings.
 
-**Distro file contract:** Each distro file (darwin.zsh, linux.zsh, etc.) must set `$ANTIDOTE_HOME` to the platform-specific path of antidote's `antidote.zsh`. This is required by plugins.zsh.
+**Distro file contract:** Each distro file (darwin.zsh, linux.zsh, etc.) must set `$ANTIDOTE_ZSH` to the platform-specific path of antidote's `antidote.zsh`. This is required by plugins.zsh.
 
 ## User Preferences
 - Colorblind - don't suggest syntax highlighting

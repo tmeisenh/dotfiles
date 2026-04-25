@@ -117,6 +117,7 @@ source_if_exists "$HOME/.docker/init-zsh.sh"
 # direnv - auto-load .envrc files per directory
 command -v direnv >/dev/null && eval "$(direnv hook zsh)"
 
-export ANTIDOTE_HOME="$HOMEBREW_HOME/opt/antidote/share/antidote"
+export ANTIDOTE_ZSH="$HOMEBREW_HOME/opt/antidote/share/antidote/antidote.zsh"
+export ANTIDOTE_HOME="$HOME/.antidote"
 
 # end

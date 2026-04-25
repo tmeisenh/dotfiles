@@ -4,9 +4,7 @@
 # Author: Travis Meisenheimer <travis@indexoutofbounds.com>
 #********************************************************************
 
-[[ -z "$ANTIDOTE_HOME" ]] && echo "plugins.zsh: ANTIDOTE_HOME not set by distro file" >&2 && return 1
-
-source_if_exists "$ANTIDOTE_HOME/antidote.zsh"
+source_if_exists "$ANTIDOTE_ZSH"
 antidote load
 
 bindkey '^[[A' history-substring-search-up      # Up arrow
