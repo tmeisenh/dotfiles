@@ -1,1 +1,1 @@
-SHELL_SESSIONS_DISABLE=1
+SHELL_SESSIONS_DISABLE=1 # disables MacOS shell management
