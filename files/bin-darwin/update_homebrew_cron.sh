@@ -2,6 +2,7 @@
 
 source "$HOME/bin-darwin/get_homebrew_path.sh"
 export PATH=$HOMEBREW_HOME/bin:$HOMEBREW_HOME/sbin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin
+export NONINTERACTIVE=1
 
 if [ ! -f "$(which brew)" ]; then
   echo "homebrew is not installed"
