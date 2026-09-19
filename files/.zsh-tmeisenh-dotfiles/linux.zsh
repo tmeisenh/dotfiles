@@ -5,11 +5,11 @@
 # Linux-related zsh aliases and functions
 #********************************************************************
 
-alias ls="ls --color -F -T 0 -b -h -H -X"
-alias lsd="ls --color -d -T 0 -b -h -H -X *(-/DN)"
-alias llsd="ls --color -ld -T 0 -b -h -H -X *(-/DN)"
-alias lsa="ls --color -ld -h -H -X -b -T 0 .*"
-alias last_mod="ls --color -Flat -h -H -b -X -T 0"
+alias ls="ls --color=auto -F -T 0 -b -h -H -X"
+alias lsd="ls --color=auto -d -T 0 -b -h -H -X *(-/DN)"
+alias llsd="ls --color=auto -ld -T 0 -b -h -H -X *(-/DN)"
+alias lsa="ls --color=auto -ld -h -H -X -b -T 0 .*"
+alias last_mod="ls --color=auto -Flat -h -H -b -X -T 0"
 alias xcopy="xclip"
 alias pbcopy="xclip"
 

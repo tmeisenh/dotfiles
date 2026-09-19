@@ -47,7 +47,7 @@ export GIT_EDITOR='vim'
 
 alias ctags-objc="ctags --languages=objectivec --langmap=objectivec:.h.m"
 # Use gnu-ls if available otherwise use the (freebsd) version
-gls &>/dev/null 2>&1 && alias ls="gls --color -F -T 0 -b -h -X -H" || alias ls="ls -F -T -b -h -C -G"
+gls &>/dev/null 2>&1 && alias ls="gls --color=auto -F -T 0 -b -h -X -H" || alias ls="ls -F -T -b -h -C -G"
 
 
 # opens any workspace in the current working directory
@@ -79,10 +79,8 @@ function launchd_mylist() {
 
 ## adds java
 export JAVA_HOME="$HOMEBREW_HOME/opt/openjdk@21"
-PIP_BIN=$(ls -d "$HOME/Library/Python/3."*/bin 2>/dev/null | tail -1)
 path=(
   "$JAVA_HOME/bin"
-  ${PIP_BIN:+"$PIP_BIN"}
   "$path[@]"
 )
 
