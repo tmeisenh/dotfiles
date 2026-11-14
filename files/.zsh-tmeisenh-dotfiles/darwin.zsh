@@ -21,12 +21,16 @@ path=(
   "$HOME/.codeium/windsurf/bin"
   "$path[@]"
 )
-# homebrew manpath additions
-if [ -d "$HOMEBREW_HOME/opt/coreutils/libexec/gnuman" ]; then
+# GNU coreutils (installed via Brewfile.basic): GNU man pages and ls
+# GNU ls is needed for the 256-color, per-extension LS_COLORS in ls_colors.sh
+if [[ -d "$HOMEBREW_HOME/opt/coreutils" ]]; then
   manpath=(
     "$HOMEBREW_HOME/opt/coreutils/libexec/gnuman"
     "$manpath[@]"
   )
+  alias ls="gls --color=auto -F -T 0 -b -h -X -H"
+else
+  alias ls="ls -F -T -b -h -C -G" # BSD ls
 fi
 
 # Disables homebrew from doing a 'brew update' when you just want to 'brew install' something
@@ -46,8 +50,6 @@ export GIT_PAGER='less'
 export GIT_EDITOR='vim'
 
 alias ctags-objc="ctags --languages=objectivec --langmap=objectivec:.h.m"
-# Use gnu-ls if available otherwise use the (freebsd) version
-gls &>/dev/null 2>&1 && alias ls="gls --color=auto -F -T 0 -b -h -X -H" || alias ls="ls -F -T -b -h -C -G"
 
 
 # opens any workspace in the current working directory
