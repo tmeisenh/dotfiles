@@ -110,8 +110,6 @@ npx() { _init_nvm; npx "$@" }
 export GTAGSLABEL=pygments
 export EMACS_USER_DIRECTORY=$HOME/.emacs.d
 
-source_if_exists "$HOME/.docker/init-zsh.sh"
-
 # direnv - auto-load .envrc files per directory
 command -v direnv >/dev/null && eval "$(direnv hook zsh)"
 
