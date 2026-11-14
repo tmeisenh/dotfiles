@@ -21,7 +21,6 @@ killport() {
 
 # Usage: smartextract <file>
 # Description: extracts archived files
-# This uses the aliases defined above
 smartextract() {
   if [[ ! -f "$1" ]]; then
     echo "'$1' is not a valid file."
@@ -29,21 +28,18 @@ smartextract() {
   fi
 
   case "${1:l}" in  # Convert to lowercase for case-insensitive matching
-    *.tar.bz2|*.tbz2)
-      bz "$1" ;;
-    *.tar.gz|*.tgz)
-      utar "$1" ;;
+    *.tar|*.tar.gz|*.tgz|*.tar.bz2|*.tbz2|*.tar.xz|*.txz)
+      # bsdtar and GNU tar both auto-detect compression on extract
+      tar --verbose --extract --file "$1" ;;
     *.bz2)
       bunzip2 "$1" ;;
     *.gz)
       gunzip "$1" ;;
     *.jar)
       jar xf "$1" ;;
-    *.tar)
-      utar "$1" ;;
     *.zip)
       unzip "$1" ;;
-    *.Z)
+    *.z)
       uncompress "$1" ;;
     *.xz)
       unxz "$1" 2>/dev/null || echo "unxz not found, install xz-utils" ;;
