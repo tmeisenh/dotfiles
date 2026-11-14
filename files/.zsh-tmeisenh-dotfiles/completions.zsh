@@ -16,6 +16,10 @@
 # load compinit!
 autoload -U compinit && compinit
 
+# Offer hidden files in completion without typing the leading dot,
+# while plain * globs still skip them (glob_dots is off in options.zsh)
+_comp_options+=(globdots)
+
 # Use built-in completion system
 # No need for custom completion widgets
 

@@ -30,7 +30,9 @@ unsetopt menu_complete    # Don't insert first match immediately
 # Globbing Options
 # ----------------------
 setopt extended_glob      # Enable advanced pattern matching
-setopt glob_dots          # Don't require leading dot for matching hidden files
+# glob_dots is intentionally off: * skips hidden files (names starting with .)
+# so `mv * dest/` won't grab .git. Use .* or the (D) qualifier to include them.
+# Completion still offers hidden files (see _comp_options in completions.zsh).
 setopt glob_complete      # Show completion menu when glob has multiple matches
 # nullglob is intentionally off: unmatched globs error out (zsh default).
 # Use the (N) qualifier on individual globs that may legitimately match nothing.
