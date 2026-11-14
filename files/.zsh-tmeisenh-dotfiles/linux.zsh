@@ -18,10 +18,6 @@ bindkey "^[OF" end-of-line         ## end
 bindkey "^[OA" up-line-or-search   ## up arrow for back-history-search
 bindkey "^[OB" down-line-or-search ## down arrow for fwd-history-search
 
-# color man pages, whoa...
-VIM_LESS=$(ls -d /usr/share/vim/vim*/macros/less.sh 2>/dev/null | tail -1)
-#export MANPAGER="col -b | ${VIM_LESS} -c 'set ft=man nomod nolist nofoldenable' -"
-
 # Hash common directories
 hash -d log=/var/log
 
@@ -47,22 +43,5 @@ function unmount_ext2fs_usbstick() {
 # environment stuff
 #********************************************************************
 
-export JAVA_HOME=$(ls -d /usr/lib/jvm/java-*-openjdk* 2>/dev/null | sort -V | tail -1)
-export IDEA_JDK="$JAVA_HOME"
-export M3_HOME=/usr/local/apache-maven
-export ANT_HOME=/usr/local/share/java/apache-ant
-export GRADLE_HOME=/usr/local/gradle
-export ANDROID_HOME=~/android-sdk/sdk
 export ANTIDOTE_HOME=~/.antidote
 export ANTIDOTE_ZSH=/usr/share/zsh-antidote/antidote.zsh
-
-path=(
-  "$JAVA_HOME/bin"
-  "$M3_HOME/bin"
-  "$ANT_HOME/bin"
-  "$GRADLE_HOME/bin"
-  "$HOME/.rvm/bin"
-  "$ANDROID_HOME/platform-tools"
-  "$ANDROID_HOME/tools"
-  "${path[@]}"
-)
