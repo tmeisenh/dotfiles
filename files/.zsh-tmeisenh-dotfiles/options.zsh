@@ -32,7 +32,8 @@ unsetopt menu_complete    # Don't insert first match immediately
 setopt extended_glob      # Enable advanced pattern matching
 setopt glob_dots          # Don't require leading dot for matching hidden files
 setopt glob_complete      # Show completion menu when glob has multiple matches
-setopt nullglob           # Delete patterns with no matches instead of error
+# nullglob is intentionally off: unmatched globs error out (zsh default).
+# Use the (N) qualifier on individual globs that may legitimately match nothing.
 
 # ----------------------
 # History Options

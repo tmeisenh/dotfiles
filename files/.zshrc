@@ -105,7 +105,7 @@ source_if_exists "${host_zsh}"
 source_if_exists "$ZSHCONF"/private.zsh
 
 # Load anything specific to a work project
-for f in "$ZSHCONF"/projects/*.zsh; do
+for f in "$ZSHCONF"/projects/*.zsh(N.); do
   source_if_exists "$f"
 done
 
