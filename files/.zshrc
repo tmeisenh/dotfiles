@@ -71,9 +71,6 @@ limit -s
 # Load shell options
 source_if_exists "$ZSHCONF"/options.zsh
 
-# Load command completions
-source_if_exists "$ZSHCONF"/completions.zsh
-
 # Configure keys working (never works by default)
 # Note: must be loaded after options due to zle vi keybinding enablement
 source_if_exists "$ZSHCONF"/keys.zsh
@@ -95,6 +92,10 @@ source_if_exists "${distro_zsh}"
 
 # Load plugins (distro file sets ANTIDOTE_HOME)
 source_if_exists "$ZSHCONF/plugins.zsh"
+
+# Load command completions
+# Note: must be loaded after plugins so compinit sees zsh-completions in fpath
+source_if_exists "$ZSHCONF"/completions.zsh
 
 # Load system specific settings (box1, box2, etc)
 host_zsh="${ZSHCONF}/host-$(hostname | tr "[:upper:]" "[:lower:]").zsh"
