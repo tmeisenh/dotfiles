@@ -3,7 +3,7 @@
 #
 # Author: Travis Meisenheimer <travis@indexoutofbounds.com>
 #
-# prompt.zsh setup - sets up git, works with zprezto as well
+# prompt.zsh setup - git-aware prompt, registered as the "tmeisenh" promptinit theme
 #********************************************************************
 
 function prompt_tmeisenh_precmd() {
@@ -22,13 +22,11 @@ function prompt_char() {
 function prompt_tmeisenh_setup() {
   setopt LOCAL_OPTIONS
   unsetopt XTRACE KSH_ARRAYS
-  prompt_opts=(cr percent subst)
+  prompt_opts=(cr percent sp subst) # promptinit turns OFF any prompt option not listed
 
   # Load required functions.
   autoload -Uz add-zsh-hook
   autoload -Uz vcs_info
-  autoload -U promptinit && promptinit
-  # colors are already loaded in .zshrc
 
   _tmeisenh_colors=(
     "%B%F{1}" #red
@@ -55,9 +53,19 @@ function prompt_tmeisenh_setup() {
 
   # trailing space to separate vcs_info from cwd is in the vcs_info zstyles....
   PROMPT='%(!.${_tmeisenh_colors[1]}.${_tmeisenh_colors[2]}%n@)%m ${_tmeisenh_colors[3]}%@ ${_tmeisenh_colors[4]}${vcs_info_msg_0_}${_tmeisenh_colors[5]}%1d $(prompt_char)${_tmeisenh_colors[6]} '
+
+  # Reset the other prompts to zsh defaults so nothing lingers after switching themes
+  RPROMPT=''
+  RPROMPT2=''
+  PS2='%_> '
+  PS3='?# '
+  PS4='+%N:%i> '
 }
 
 # Set prompt_subst if not already enabled
 [[ -o prompt_subst ]] || setopt prompt_subst
 
-prompt_tmeisenh_setup "$@"
+# My zsh theme is not auto-discoverable so manually register it
+autoload -Uz promptinit && promptinit
+prompt_themes+=(tmeisenh)
+prompt tmeisenh
