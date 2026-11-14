@@ -107,8 +107,7 @@ zstyle ':completion:*:*:gunzip:*' file-patterns '*.Z:compressed-files *.gz:compr
 
 # For tar archives
 zstyle ':completion:*:*:tar:*' file-patterns '*.tar:tar-archives *.tar.Z:tar-archives *.tar.gz:tar-archives *.tgz:tar-archives *.tar.bz2:tar-archives *:all-files'
-zstyle ':completion:*:*:smartextract:*' file-patterns '*.tar:tar-archives *.tar.Z:tar-archives *.tar.gz:tar-archives *.tgz:tar-archives *.tar.bz2:tar-archives *.zip:zip-archives *.ZIP:zip-archives *:all-files'
-zstyle ':completion:*:*:se:*' file-patterns '*.tar:tar-archives *.tar.Z:tar-archives *.tar.gz:tar-archives *.tgz:tar-archives *.tar.bz2:tar-archives *.zip:zip-archives *.ZIP:zip-archives *:all-files'
+zstyle ':completion:*:*:(smartextract|se):*' file-patterns '*.(#i)(tar|tar.gz|tgz|zip):archives *:all-files'
 
 # For zip files
 zstyle ':completion:*:*:unzip:*' file-patterns '*.zip:zip-archives *.ZIP:zip-archives *:all-files'

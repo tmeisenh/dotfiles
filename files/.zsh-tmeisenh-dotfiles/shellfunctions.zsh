@@ -28,30 +28,18 @@ smartextract() {
   fi
 
   case "${1:l}" in  # Convert to lowercase for case-insensitive matching
-    *.tar|*.tar.gz|*.tgz|*.tar.bz2|*.tbz2|*.tar.xz|*.txz)
+    *.tar|*.tar.gz|*.tgz)
       # bsdtar and GNU tar both auto-detect compression on extract
       tar --verbose --extract --file "$1" ;;
-    *.bz2)
-      bunzip2 "$1" ;;
-    *.gz)
-      gunzip "$1" ;;
-    *.jar)
-      jar xf "$1" ;;
     *.zip)
       unzip "$1" ;;
-    *.z)
-      uncompress "$1" ;;
-    *.xz)
-      unxz "$1" 2>/dev/null || echo "unxz not found, install xz-utils" ;;
-    *.7z)
-      7z x "$1" 2>/dev/null || echo "7z not found, install p7zip" ;;
     *)
       echo "'$1' cannot be extracted via smartextract()."
       return 1 ;;
   esac
 }
 
-# Usage: show-archive <archive>
+# Usage: showarchive <archive>
 # Description: view archive without unpack
 showarchive() {
   if [[ ! -f "$1" ]]; then
@@ -60,22 +48,11 @@ showarchive() {
   fi
 
   case "${1:l}" in  # Convert to lowercase for case-insensitive matching
-    *.tar.gz|*.tgz)
-      gunzip -c "$1" | tar -tf - -- ;;    
-    *.tar.bz2|*.tbz2)
-      bzcat "$1" | tar -tf - ;;    
-    *.tar)
-      tar -tf "$1" ;;    
+    *.tar|*.tar.gz|*.tgz)
+      # bsdtar and GNU tar both auto-detect compression on list
+      tar --list --file "$1" ;;
     *.zip)
-      unzip -l "$1" ;;    
-    *.bz2)
-      bzless "$1" ;;    
-    *.gz)
-      gzcat "$1" 2>/dev/null || zcat "$1" ;;    
-    *.7z)
-      7z l "$1" 2>/dev/null || echo "7z not found, install p7zip" ;;    
-    *.xz)
-      xzcat "$1" | less 2>/dev/null || echo "xzcat not found, install xz-utils" ;;    
+      unzip -l "$1" ;;
     *)
       echo "'$1' cannot be shown via showarchive"
       return 1 ;;
