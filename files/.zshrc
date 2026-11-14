@@ -16,6 +16,8 @@ export LC_ALL=en_US.UTF-8
 export LANG=$LC_ALL
 export EDITOR='vi' # For shell things I prefer vi/vim.
 export PAGER='less'
+export GIT_PAGER='less'
+export GIT_EDITOR='vim'
 export ZSHCACHEDIR=$HOME/.zsh-cache
 export ZSHCONF=$HOME/.zsh-tmeisenh-dotfiles
 

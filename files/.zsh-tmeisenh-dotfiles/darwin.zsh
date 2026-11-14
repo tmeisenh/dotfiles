@@ -40,14 +40,12 @@ export HOMEBREW_NO_AUTO_UPDATE=1
 bindkey "^[[H" beginning-of-line ## home
 bindkey "^[[F" end-of-line       ## end
 
-# use vim for less, man, and git
+# use vim for less and man
 VIM_LESS=$(ls -d $(brew --prefix vim)/share/vim/vim*/macros/less.sh 2>/dev/null | tail -1)
 if [[ -n "$VIM_LESS" ]]; then
   alias less="$VIM_LESS"
   export MANPAGER="col -b | ${VIM_LESS} -c 'set ft=man nomod nolist nofoldenable' -"
 fi
-export GIT_PAGER='less'
-export GIT_EDITOR='vim'
 
 alias ctags-objc="ctags --languages=objectivec --langmap=objectivec:.h.m"
 
