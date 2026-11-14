@@ -12,8 +12,7 @@ source "$HOME/.zsh-tmeisenh-dotfiles/utils.zsh"
 source_if_exists /etc/profile
 
 # Some environment variables and settings
-export LC_ALL=en_US.UTF-8
-export LANG=$LC_ALL
+export LANG=en_US.UTF-8 # LANG not LC_ALL: ssh forwards LC_* and LC_ALL can't be overridden remotely
 export EDITOR='vi' # For shell things I prefer vi/vim.
 export PAGER='less'
 export GIT_PAGER='less'
@@ -25,10 +24,12 @@ export ZSHCONF=$HOME/.zsh-tmeisenh-dotfiles
 watch=(notme root)
 
 # Create $user history files
-export HISTSIZE=1000000
-export SAVEHIST=1000000
-export DIRSTACKSIZE=16
-export HISTFILE=$HOME/.zsh_history
+# Not exported: these are zsh settings, and a child bash would otherwise
+# inherit HISTFILE and append its history to ~/.zsh_history
+HISTSIZE=1000000
+SAVEHIST=1000000
+DIRSTACKSIZE=16
+HISTFILE=$HOME/.zsh_history
 
 # Load some cool zsh features
 typeset -U path cdpath manpath fpath
@@ -36,7 +37,6 @@ typeset -U path cdpath manpath fpath
 # autoload zmv
 # autoload zcalc
 # autoload zargs
-autoload colors && colors
 autoload history-search-end
 # autoload zkbd
 zmodload -i zsh/complist

@@ -5,7 +5,7 @@
 ## Memory MCP
 This repo (and dotfiles-private) have been ingested into the memory MCP knowledge graph. Query the memory graph first before reading files. Use it to answer questions about structure, load order, relationships, and "where stuff is" before falling back to filesystem exploration.
 
-**Critical zsh gotcha:** Keybindings must go in keys.zsh, not plugins.zsh. `setopt vi` in options.zsh resets all bindings.
+**Critical zsh gotcha:** `setopt vi` in options.zsh resets all keybindings, so every file that binds keys must be sourced after options.zsh. Core keybindings go in keys.zsh. Plugin keybindings go in plugins.zsh, after `antidote load` (some bindings can only be made once the plugin manager has loaded).
 
 **Distro file contract:** Each distro file (darwin.zsh, linux.zsh, etc.) must set `$ANTIDOTE_ZSH` to the platform-specific path of antidote's `antidote.zsh`. This is required by plugins.zsh.
 
