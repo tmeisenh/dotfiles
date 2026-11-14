@@ -69,7 +69,6 @@ setopt notify             # Report background job status immediately
 setopt autoresume         # Resume existing jobs instead of creating new ones
 setopt noclobber          # Don't overwrite files with > (use >! to override)
 setopt rcquotes           # Allow '' to represent ' in single quoted strings
-setopt login              # Treat shell as a login shell
 setopt longlistjobs       # Display PID when suspending processes
 setopt printeightbit      # Display eight-bit characters without escaping
 setopt nohup              # Don't kill background jobs when shell exits
