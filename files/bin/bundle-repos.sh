@@ -46,16 +46,12 @@ echo "Output directory: $OUTPUT_DIR"
 echo ""
 
 # Find all git repositories (directories containing .git)
-find "$INPUT_DIR" -type d -name ".git" | while read -r git_dir; do
+# -prune stops find from descending into each .git directory
+find "$INPUT_DIR" -type d -name ".git" -prune | while read -r git_dir; do
     repo_dir="$(dirname "$git_dir")"
 
     # Get the relative path from input dir
-    rel_path="${repo_dir#$INPUT_DIR/}"
-
-    # Skip if the repo is inside another repo's .git directory
-    if [[ "$rel_path" == *"/.git/"* ]]; then
-        continue
-    fi
+    rel_path="${repo_dir#"$INPUT_DIR"/}"
 
     # Create the output directory structure
     output_path="$OUTPUT_DIR/$rel_path"
