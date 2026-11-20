@@ -10,7 +10,13 @@ author_pattern="${authors//,/\\|}"
 git log --shortstat --author="${author_pattern}" | \
   grep -E "files? changed" | \
   awk '{
-    commits++; files+=$1; inserted+=$4; deleted+=$6
+    # Match counts by label, not column: git omits "insertions" or
+    # "deletions" entirely when a commit has none of them
+    commits++; files+=$1
+    for (i = 2; i <= NF; i++) {
+      if ($i ~ /^insertion/) inserted += $(i-1)
+      else if ($i ~ /^deletion/) deleted += $(i-1)
+    }
   } END {
     delta = inserted - deleted
     ratio = (inserted > 0) ? deleted/inserted : 0
