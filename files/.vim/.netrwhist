@@ -1,9 +1,0 @@
-let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =7
-let g:netrw_dirhist_1='/home/travis/.m2/repository'
-let g:netrw_dirhist_2='/home/travis/git/helloandroid/.git'
-let g:netrw_dirhist_3='/home/travis/git/helloandroid/build'
-let g:netrw_dirhist_4='/home/travis/git/helloandroid'
-let g:netrw_dirhist_5='/home/travis/workspace/.metadata/.plugins'
-let g:netrw_dirhist_6='/home/travis/git/helloandroid/build'
-let g:netrw_dirhist_7='/home/travis/.vim/bundle'
