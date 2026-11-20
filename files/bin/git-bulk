@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-find . -type d -exec test -d '{}/.git' \; -print -prune | while read -r repo; do
+# Repo list is read on fd 3 so git commands that read stdin
+# (e.g. an editor for `git-bulk commit`) can't swallow it
+while read -r repo <&3; do
   echo "working on $repo ..."
   git -C "$repo" "$@"
-done
+done 3< <(find . -type d -exec test -d '{}/.git' \; -print -prune)
