@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+#
+# git-stale: list local and origin branches that are not merged into the
+# target branch and have had no commits in N days. Report only: nothing is
+# ever deleted.
+#
+# Activity is the committer date of the branch's head commit, so a rebase
+# counts as activity.
+#
+# Usage: git stale [--target <branch>] [--protect <branch>]... [--days <n>]
+#
+#   --target <branch>   branch to compare against (default: master)
+#   --protect <branch>  also never list this branch; repeatable. Adds to
+#                       the always-protected main and master. The target is
+#                       always protected too.
+#   --days <n>          no commits in this many days (default: 30)
+
+set -uo pipefail
+
+remote=origin
+target=master
+protected=(main master)
+days=30
+
+usage() {
+  echo "Usage: git stale [--target <branch>] [--protect <branch>]... [--days <n>]" >&2
+  exit 2
+}
+
+while (( $# > 0 )); do
+  case $1 in
+    --target)
+      [[ -n ${2:-} ]] || usage
+      target=$2; shift 2 ;;
+    --protect)
+      [[ -n ${2:-} ]] || usage
+      protected+=("$2"); shift 2 ;;
+    --days)
+      [[ ${2:-} =~ ^[0-9]+$ ]] || usage
+      days=$2; shift 2 ;;
+    *)
+      usage ;;
+  esac
+done
+protected+=("$target")
+
+is_protected() {
+  local p
+  for p in "${protected[@]}"; do
+    [[ $1 == "$p" ]] && return 0
+  done
+  return 1
+}
+
+# --prune drops stale origin/* branches; tags are left alone
+git fetch --prune "$remote" || exit 1
+
+target_ref="$remote/$target"
+if ! git rev-parse --verify --quiet "refs/remotes/$target_ref" >/dev/null; then
+  echo "No such branch: $target_ref" >&2
+  exit 1
+fi
+
+cutoff=$(( $(date +%s) - days * 86400 ))
+
+# Prints "<date>  <branch>" for each stale branch under the given ref
+# namespace, oldest first. $2 is how many leading path parts to strip
+# (refs/heads/x -> 2, refs/remotes/origin/x -> 3).
+stale_branches() {
+  local commit_epoch commit_date name
+  while IFS=$'\t' read -r commit_epoch commit_date name; do
+    [[ $name == HEAD ]] && continue
+    is_protected "$name" && continue
+    (( commit_epoch < cutoff )) || continue
+    # Military style uppercases the month: 03DEC2025 (tr, not ${commit_date^^},
+    # so it works with macOS's bash 3.2)
+    commit_date=$(tr '[:lower:]' '[:upper:]' <<< "$commit_date")
+    printf '    %s  %s\n' "$commit_date" "$name"
+  done < <(git for-each-ref --no-merged "$target_ref" --sort=committerdate \
+             --format="%(committerdate:unix)%09%(committerdate:format-local:%d%b%Y %H:%M)%09%(refname:lstrip=$2)" \
+             "$1")
+}
+
+local_list=$(stale_branches refs/heads/ 2)
+remote_list=$(stale_branches "refs/remotes/$remote/" 3)
+
+if [[ -z $local_list && -z $remote_list ]]; then
+  echo "No branches unmerged into $target_ref and idle for $days+ days."
+  exit 0
+fi
+
+echo "Branches not merged into $target_ref, no commits in $days+ days (protected: ${protected[*]})"
+if [[ -n $local_list ]]; then
+  echo
+  echo "  local:"
+  echo "$local_list"
+fi
+if [[ -n $remote_list ]]; then
+  echo
+  echo "  $remote:"
+  echo "$remote_list"
+fi
